@@ -224,12 +224,28 @@ app.get('/api/services/:id', async (req, res) => {
 // CREATE
 app.post('/api/services', async (req, res) => {
     try {
-        const { ServiceName, Description, SubCategoryID } = req.body;
+        const { ServiceName, Description, SubCategoryID, CategoryName } = req.body;
         const p = await getPool();
+
+        let finalSubCatId = SubCategoryID || 1;
+        if (CategoryName && !SubCategoryID) {
+            const catRes = await p.request().input('cName', sql.NVarChar, CategoryName).query('SELECT CategoryID FROM MasterCategories WHERE CategoryName = @cName');
+            if (catRes.recordset.length > 0) {
+                const catId = catRes.recordset[0].CategoryID;
+                const subCatRes = await p.request().input('catId', sql.Int, catId).query('SELECT TOP 1 SubCategoryID FROM MasterSubCategories WHERE CategoryID = @catId');
+                if (subCatRes.recordset.length > 0) {
+                    finalSubCatId = subCatRes.recordset[0].SubCategoryID;
+                } else {
+                    const insSub = await p.request().input('catId', sql.Int, catId).query("INSERT INTO MasterSubCategories (CategoryID, SubCategoryName) OUTPUT INSERTED.SubCategoryID VALUES (@catId, 'General')");
+                    finalSubCatId = insSub.recordset[0].SubCategoryID;
+                }
+            }
+        }
+
         const result = await p.request()
             .input('name', sql.NVarChar, ServiceName)
             .input('desc', sql.NVarChar, Description || '')
-            .input('subCatId', sql.Int, SubCategoryID || 1)
+            .input('subCatId', sql.Int, finalSubCatId)
             .query('INSERT INTO ServiceCatalog (SubCategoryID, ServiceName, Description) OUTPUT INSERTED.ServiceID VALUES (@subCatId, @name, @desc)');
         res.status(201).json({ ServiceID: result.recordset[0].ServiceID, message: 'Service created' });
     } catch (err) {
@@ -240,13 +256,29 @@ app.post('/api/services', async (req, res) => {
 // UPDATE
 app.put('/api/services/:id', async (req, res) => {
     try {
-        const { ServiceName, Description, SubCategoryID } = req.body;
+        const { ServiceName, Description, SubCategoryID, CategoryName } = req.body;
         const p = await getPool();
+
+        let finalSubCatId = SubCategoryID || 1;
+        if (CategoryName && !SubCategoryID) {
+            const catRes = await p.request().input('cName', sql.NVarChar, CategoryName).query('SELECT CategoryID FROM MasterCategories WHERE CategoryName = @cName');
+            if (catRes.recordset.length > 0) {
+                const catId = catRes.recordset[0].CategoryID;
+                const subCatRes = await p.request().input('catId', sql.Int, catId).query('SELECT TOP 1 SubCategoryID FROM MasterSubCategories WHERE CategoryID = @catId');
+                if (subCatRes.recordset.length > 0) {
+                    finalSubCatId = subCatRes.recordset[0].SubCategoryID;
+                } else {
+                    const insSub = await p.request().input('catId', sql.Int, catId).query("INSERT INTO MasterSubCategories (CategoryID, SubCategoryName) OUTPUT INSERTED.SubCategoryID VALUES (@catId, 'General')");
+                    finalSubCatId = insSub.recordset[0].SubCategoryID;
+                }
+            }
+        }
+
         await p.request()
             .input('id', sql.Int, req.params.id)
             .input('name', sql.NVarChar, ServiceName)
             .input('desc', sql.NVarChar, Description || '')
-            .input('subCatId', sql.Int, SubCategoryID || 1)
+            .input('subCatId', sql.Int, finalSubCatId)
             .query('UPDATE ServiceCatalog SET ServiceName = @name, Description = @desc, SubCategoryID = @subCatId WHERE ServiceID = @id');
         res.json({ message: 'Service updated' });
     } catch (err) {
@@ -258,11 +290,55 @@ app.put('/api/services/:id', async (req, res) => {
 app.delete('/api/services/:id', async (req, res) => {
     try {
         const p = await getPool();
-        // Delete related activities and parameters first
-        await p.request().input('id', sql.Int, req.params.id).query('DELETE FROM ServiceActivities WHERE ServiceID = @id');
-        await p.request().input('id2', sql.Int, req.params.id).query('DELETE FROM PricingParameters WHERE ServiceID = @id2');
-        await p.request().input('id3', sql.Int, req.params.id).query('DELETE FROM ServiceCatalog WHERE ServiceID = @id3');
-        res.json({ message: 'Service deleted' });
+        const transaction = new sql.Transaction(p);
+        await transaction.begin();
+
+        try {
+            const reqQuery = transaction.request();
+            const svcId = req.params.id;
+
+            // 1. Delete associated Notifications for the Requests 
+            await reqQuery.input('sv1', sql.Int, svcId).query(`
+                DELETE FROM Notifications 
+                WHERE RelatedID IN (SELECT RequestID FROM TransactionHeader WHERE ServiceID = @sv1)
+            `);
+
+            // 1b. Delete associated Messages
+            await reqQuery.input('svmsg', sql.Int, svcId).query(`
+                DELETE FROM Messages 
+                WHERE RequestID IN (SELECT RequestID FROM TransactionHeader WHERE ServiceID = @svmsg)
+            `);
+
+            // 1c. Delete associated NegotiationHistory
+            await reqQuery.input('svn', sql.Int, svcId).query(`
+                DELETE FROM NegotiationHistory 
+                WHERE RequestID IN (SELECT RequestID FROM TransactionHeader WHERE ServiceID = @svn)
+            `);
+
+            // 2. Delete TransactionDetail associated with those Requests
+            await reqQuery.input('sv2', sql.Int, svcId).query(`
+                DELETE FROM TransactionDetail 
+                WHERE RequestID IN (SELECT RequestID FROM TransactionHeader WHERE ServiceID = @sv2)
+            `);
+
+            // 3. Delete TransactionHeader (the requests)
+            await reqQuery.input('sv3', sql.Int, svcId).query(`
+                DELETE FROM TransactionHeader WHERE ServiceID = @sv3
+            `);
+
+            // 4. Delete related Service activities and parameters
+            await reqQuery.input('sv4', sql.Int, svcId).query('DELETE FROM ServiceActivities WHERE ServiceID = @sv4');
+            await reqQuery.input('sv5', sql.Int, svcId).query('DELETE FROM PricingParameters WHERE ServiceID = @sv5');
+
+            // 5. Delete the Service itself
+            await reqQuery.input('sv6', sql.Int, svcId).query('DELETE FROM ServiceCatalog WHERE ServiceID = @sv6');
+
+            await transaction.commit();
+            res.json({ message: 'Service and all related requests deleted successfully' });
+        } catch (innerErr) {
+            await transaction.rollback();
+            throw innerErr;
+        }
     } catch (err) {
         res.status(500).json({ error: err.message });
     }
@@ -396,18 +472,19 @@ app.get('/api/requests/:id/messages', async (req, res) => {
 // POST A NEW MESSAGE
 app.post('/api/requests/:id/messages', async (req, res) => {
     try {
-        const { Sender, MessageText } = req.body;
-        if (!Sender || !MessageText) return res.status(400).json({ error: 'Sender and MessageText are required' });
+        const { Sender, MessageText, AttachmentData } = req.body;
+        if (!Sender || (!MessageText && !AttachmentData)) return res.status(400).json({ error: 'Sender and either MessageText or AttachmentData are required' });
 
         const p = await getPool();
         const result = await p.request()
             .input('id', sql.Int, req.params.id)
             .input('sender', sql.NVarChar, Sender)
-            .input('msg', sql.NVarChar, MessageText)
+            .input('msg', sql.NVarChar, MessageText || '')
+            .input('att', sql.NVarChar, AttachmentData || null)
             .query(`
-                INSERT INTO Messages (RequestID, Sender, MessageText)
+                INSERT INTO Messages (RequestID, Sender, MessageText, AttachmentData)
                 OUTPUT INSERTED.*
-                VALUES (@id, @sender, @msg)
+                VALUES (@id, @sender, @msg, @att)
             `);
 
         // Trigger notification if Client sent it
@@ -416,6 +493,19 @@ app.post('/api/requests/:id/messages', async (req, res) => {
         }
 
         res.status(201).json(result.recordset[0]);
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// DELETE A MESSAGE
+app.delete('/api/messages/:id', async (req, res) => {
+    try {
+        const p = await getPool();
+        await p.request()
+            .input('id', sql.Int, req.params.id)
+            .query('DELETE FROM Messages WHERE MessageID = @id');
+        res.json({ message: 'Message deleted' });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id" class="scroll-smooth">
 
 <head>
@@ -144,10 +144,7 @@
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-20">
                     <div class="flex items-center gap-3">
-                        <div
-                            class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary/20">
-                            <span class="material-symbols-outlined text-[28px]">insights</span>
-                        </div>
+                        <img src="logo publik.png" alt="SI-ONE" class="h-12 object-contain" />
                         <div class="leading-none">
                             <span class="block text-xl font-bold text-primary font-display tracking-tight">SI-ONE</span>
                             <span
@@ -214,10 +211,7 @@
             <div class="p-6 border-b border-slate-100 cursor-pointer hover:bg-slate-50 transition-colors"
                 onclick="switchToLandingView()">
                 <div class="flex items-center gap-3">
-                    <div
-                        class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center text-white flex-shrink-0 shadow-lg shadow-primary/20">
-                        <span class="material-symbols-outlined">insights</span>
-                    </div>
+                    <img src="logo publik.png" alt="SI-ONE Public" class="h-10 object-contain" />
                     <div>
                         <h1 class="font-bold text-xl leading-none text-primary tracking-tight">SI-ONE</h1>
                         <p class="text-[9px] text-slate-400 uppercase tracking-[0.2em] mt-1 leading-none font-bold">
@@ -607,44 +601,17 @@
                                         <tr>
                                             <th class="px-6 py-4">Jenis Pekerjaan</th>
                                             <th class="px-6 py-4">Rincian Permintaan</th>
-                                            <th class="px-6 py-4">Spesifikasi</th>
+                                            <th class="px-6 py-4 text-right">Harga</th>
                                             <th class="px-6 py-4 text-right">Aksi</th>
                                         </tr>
                                     </thead>
-                                    <tbody class="divide-y divide-slate-50 text-sm">
-                                        <!-- Row 1 -->
-                                        <tr class="hover:bg-slate-50/50 transition-colors group">
-                                            <td class="px-6 py-4 font-semibold text-slate-700">Pemasangan Pipa HDPE</td>
-                                            <td class="px-6 py-4 text-slate-600">Site Area A, Kalimantan Timur</td>
-                                            <td class="px-6 py-4 text-slate-600">HDPE PN10 4 Inch, Mesin Butt Fusion
-                                            </td>
-                                            <td class="px-6 py-4 text-right">
-                                                <button
-                                                    class="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                                                    title="Hapus">
-                                                    <span class="material-symbols-outlined !text-lg">delete</span>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                        <!-- Row 2 -->
-                                        <tr class="hover:bg-slate-50/50 transition-colors group">
-                                            <td class="px-6 py-4 font-semibold text-slate-700">Pengurukan Tanah Kembali
-                                            </td>
-                                            <td class="px-6 py-4 text-slate-600">Site Area A, Kalimantan Timur</td>
-                                            <td class="px-6 py-4 text-slate-600">Dump Truck 10m3, Vibro Roller</td>
-                                            <td class="px-6 py-4 text-right">
-                                                <button
-                                                    class="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all"
-                                                    title="Hapus">
-                                                    <span class="material-symbols-outlined !text-lg">delete</span>
-                                                </button>
-                                            </td>
-                                        </tr>
+                                    <tbody id="offerItemsBody" class="divide-y divide-slate-50 text-sm">
+                                        <!-- Items will be loaded here -->
                                     </tbody>
                                 </table>
                             </div>
-                            <!-- Empty State (Hidden by default, shown if needed via JS) -->
-                            <div class="hidden p-8 text-center bg-slate-50/30">
+                            <!-- Empty State -->
+                            <div id="offerItemsEmptyState" class="p-8 text-center bg-slate-50/30">
                                 <div
                                     class="w-12 h-12 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3 text-slate-400">
                                     <span class="material-symbols-outlined text-2xl">inbox</span>
@@ -689,9 +656,7 @@
         <!-- Sidebar Admin Lengkap -->
         <aside class="w-64 bg-primary text-white flex-shrink-0 hidden md:flex flex-col">
             <div class="h-16 flex items-center gap-3 px-6 border-b border-white/10">
-                <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center">
-                    <span class="material-symbols-outlined text-white text-lg">insights</span>
-                </div>
+                <img src="logo admin.png" alt="SI-ONE Admin" class="h-8 object-contain" />
                 <span class="font-bold font-display tracking-tight">SI-ONE Admin</span>
             </div>
 
@@ -1106,21 +1071,24 @@
 
                         <!-- Filter Bar -->
                         <div class="p-4 bg-slate-50/50 flex flex-col md:flex-row justify-between items-center gap-4">
+                            <div class="flex items-center gap-3 w-full md:w-auto">
+                                <label class="text-xs font-bold text-slate-500 uppercase">Urutkan:</label>
+                                <select id="adminRequestsSort"
+                                    onchange="adminRequestsSortBy=this.value; adminRequestsCurrentPage=1; applyAdminRequestsFilters();"
+                                    class="bg-white border border-slate-200 text-slate-700 text-sm rounded-lg focus:ring-primary focus:border-primary p-2 outline-none">
+                                    <option>Terbaru</option>
+                                    <option>Terlama</option>
+                                    <option>Nilai Tertinggi</option>
+                                    <option>Nilai Terendah</option>
+                                </select>
+                            </div>
                             <div class="relative w-full md:w-96">
                                 <span
                                     class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">search</span>
-                                <input type="text" placeholder="Cari nama perusahaan atau ID..."
+                                <input type="text" id="adminRequestsSearch"
+                                    placeholder="Cari nama perusahaan atau ID..."
+                                    oninput="adminRequestsFilterSearch=this.value; adminRequestsCurrentPage=1; applyAdminRequestsFilters();"
                                     class="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg focus:ring-2 focus:ring-primary/20 outline-none text-sm shadow-sm">
-                            </div>
-                            <div class="flex items-center gap-2">
-                                <button
-                                    class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm">filter_list</span> Filter
-                                </button>
-                                <button
-                                    class="px-3 py-2 bg-white border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:bg-slate-50 flex items-center gap-2">
-                                    <span class="material-symbols-outlined text-sm">sort</span> Sort
-                                </button>
                             </div>
                         </div>
 
@@ -1144,21 +1112,10 @@
                         </div>
 
                         <!-- Pagination -->
-                        <div class="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
-                            <p class="text-xs text-slate-500">Showing <span class="font-bold text-slate-800">1-3</span>
-                                of <span class="font-bold text-slate-800">12</span> results</p>
-                            <div class="flex gap-1">
-                                <button
-                                    class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-primary transition-all"><span
-                                        class="material-symbols-outlined text-[16px]">chevron_left</span></button>
-                                <button
-                                    class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white text-xs font-bold shadow-md shadow-primary/20">1</button>
-                                <button
-                                    class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 hover:text-primary transition-all">2</button>
-                                <button
-                                    class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-primary transition-all"><span
-                                        class="material-symbols-outlined text-[16px]">chevron_right</span></button>
-                            </div>
+                        <div id="adminRequestsPaginationContainer"
+                            class="px-6 py-4 border-t border-slate-100 flex items-center justify-between">
+                            <p class="text-xs text-slate-500">Showing <span class="font-bold text-slate-800">0</span>
+                                of <span class="font-bold text-slate-800">0</span> results</p>
                         </div>
                     </div>
                 </div>
@@ -1346,16 +1303,20 @@
                     <div class="relative group">
                         <div
                             class="w-24 h-24 rounded-full bg-slate-100 ring-4 ring-primary/10 overflow-hidden shadow-sm flex items-center justify-center">
-                            <span class="material-symbols-outlined text-5xl text-slate-400">person</span>
+                            <img id="adminConfigProfileImg" class="w-full h-full object-cover hidden">
+                            <span id="adminConfigProfileIcon"
+                                class="material-symbols-outlined text-5xl text-slate-400">person</span>
                         </div>
-                        <button
+                        <input type="file" id="adminConfigProfileUpload" class="hidden" accept="image/*"
+                            onchange="previewAdminProfileImage(event)">
+                        <button onclick="document.getElementById('adminConfigProfileUpload').click()"
                             class="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full border-4 border-white shadow-md hover:bg-blue-700 transition-colors">
                             <span class="material-symbols-outlined text-[16px]">edit</span>
                         </button>
                     </div>
                     <div class="text-center">
-                        <h4 class="text-xl font-bold text-slate-800">Alex Henderson</h4>
-                        <p class="text-sm text-slate-500">System Administrator</p>
+                        <h4 id="adminConfigDisplayTitle" class="text-xl font-bold text-slate-800">Administrator</h4>
+                        <p id="adminConfigDisplayRole" class="text-sm text-slate-500">System Administrator</p>
                     </div>
                 </div>
 
@@ -1368,12 +1329,12 @@
                     <div class="space-y-3">
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1.5">Full Name</label>
-                            <input type="text" value="Alex Henderson"
+                            <input id="adminConfigFullName" type="text"
                                 class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400">
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1.5">Email Address</label>
-                            <input type="email" value="alex.h@company-portal.com"
+                            <input id="adminConfigEmail" type="email"
                                 class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400">
                         </div>
                     </div>
@@ -1391,9 +1352,9 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1.5">Current Password</label>
                             <div class="relative">
-                                <input type="password" value="password123"
+                                <input id="adminConfigCurrPass" type="password" placeholder="Current password"
                                     class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all pr-10">
-                                <button
+                                <button onclick="togglePasswordVisibility('adminConfigCurrPass', this)"
                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary">
                                     <span class="material-symbols-outlined text-[20px]">visibility</span>
                                 </button>
@@ -1402,9 +1363,9 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1.5">New Password</label>
                             <div class="relative">
-                                <input type="password" placeholder="Create new password"
+                                <input id="adminConfigNewPass" type="password" placeholder="Create new password"
                                     class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all pr-10">
-                                <button
+                                <button onclick="togglePasswordVisibility('adminConfigNewPass', this)"
                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary">
                                     <span class="material-symbols-outlined text-[20px]">visibility_off</span>
                                 </button>
@@ -1413,9 +1374,9 @@
                         <div>
                             <label class="block text-sm font-medium text-slate-700 mb-1.5">Confirm New Password</label>
                             <div class="relative">
-                                <input type="password" placeholder="Repeat new password"
+                                <input id="adminConfigConfPass" type="password" placeholder="Repeat new password"
                                     class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all pr-10">
-                                <button
+                                <button onclick="togglePasswordVisibility('adminConfigConfPass', this)"
                                     class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-primary">
                                     <span class="material-symbols-outlined text-[20px]">visibility_off</span>
                                 </button>
@@ -1437,7 +1398,7 @@
 
             <!-- Footer -->
             <div class="p-4 border-t border-slate-100 bg-white sticky bottom-0 z-10">
-                <button onclick="alert('Changes saved successfully!'); closeAdminConfigModal();"
+                <button onclick="saveAdminConfig()"
                     class="w-full bg-primary hover:bg-blue-800 text-white font-bold py-3.5 rounded-xl shadow-lg shadow-primary/20 transition-all text-sm active:scale-[0.98]">
                     Save Changes
                 </button>
@@ -1746,7 +1707,7 @@
                         <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Pemilik
                             Portofolio</label>
                         <div class="relative">
-                            <select id="editServiceOwner"
+                            <select id="editServiceOwner" onchange="loadCategoryOptions(this.value)"
                                 class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-semibold outline-none text-slate-800 appearance-none cursor-pointer">
                                 <option value="">-- Pilih Divisi --</option>
                             </select>
@@ -1757,13 +1718,11 @@
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Bidang
-                                Inspeksi</label>
+                                / Sektor</label>
                             <div class="relative">
                                 <select id="editServiceCategory"
                                     class="w-full px-4 py-3 bg-slate-50 border border-slate-100 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all font-semibold outline-none appearance-none text-slate-800 cursor-pointer">
-                                    <option value="Migas">Migas</option>
-                                    <option value="Infrastruktur">Infrastruktur</option>
-                                    <option value="Ketenagalistrikan">Ketenagalistrikan</option>
+                                    <option value="">-- Pilih BIdang / Sektor --</option>
                                 </select>
                                 <span
                                     class="absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-slate-400 pointer-events-none">expand_more</span>
@@ -2569,10 +2528,14 @@
             <div class="p-5 bg-white border-t border-slate-100 shrink-0">
                 <div
                     class="flex items-center gap-3 bg-slate-50 p-2 rounded-2xl border border-slate-200 focus-within:ring-2 focus-within:ring-primary/20 focus-within:bg-white transition-all">
-                    <button
+                    <input type="file" id="publicChatAttachment" class="hidden"
+                        onchange="handlePublicChatAttachment(event)" />
+                    <button onclick="document.getElementById('publicChatAttachment').click()"
                         class="p-2 text-slate-400 hover:text-primary transition-colors flex items-center justify-center">
-                        <span class="material-symbols-outlined text-[24px]">add_circle</span>
+                        <span class="material-symbols-outlined text-[24px]">attach_file</span>
                     </button>
+                    <span id="publicChatAttachmentName"
+                        class="text-[10px] text-slate-500 max-w-[80px] truncate hidden"></span>
                     <input id="chatModalInput"
                         class="flex-1 bg-transparent border-none focus:ring-0 text-sm py-2 placeholder:text-slate-400 outline-none"
                         placeholder="Ketik pesan Anda..." type="text"
@@ -2628,9 +2591,14 @@
                     </div>
                     <div class="p-4 border-t border-slate-100">
                         <div class="flex items-center gap-2">
-                            <button class="p-2 text-slate-400 hover:text-primary transition-colors">
+                            <input type="file" id="adminChatAttachment" class="hidden"
+                                onchange="handleAdminChatAttachment(event)" />
+                            <button class="p-2 text-slate-400 hover:text-primary transition-colors"
+                                onclick="document.getElementById('adminChatAttachment').click()">
                                 <span class="material-symbols-outlined">attach_file</span>
                             </button>
+                            <span id="adminChatAttachmentName"
+                                class="text-[10px] text-slate-500 max-w-[80px] truncate hidden"></span>
                             <input id="adminChatInput" onkeypress="if(event.key === 'Enter') sendAdminChatMessage()"
                                 class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-2 text-sm focus:ring-1 focus:ring-primary outline-none"
                                 placeholder="Ketik pesan..." type="text" disabled />
@@ -3116,24 +3084,90 @@
         }
 
         // ===== LOAD ADMIN REQUESTS TABLE =====
+        let adminRequestsData = [];
+        let adminRequestsCurrentPage = 1;
+        const adminRequestsPerPage = 5;
+        let adminRequestsSortBy = 'Terbaru';
+        let adminRequestsFilterSearch = '';
+        let adminRequestsFilterStatus = 'All';
+
         async function loadAdminRequests(statusFilter) {
             try {
-                const url = statusFilter && statusFilter !== 'All' ? '/requests?status=' + statusFilter : '/requests';
-                const requests = await api(url);
-                const tbody = document.getElementById('adminRequestsBody');
-                if (!tbody) return;
-                tbody.innerHTML = '';
-                requests.forEach(r => {
-                    const initials = (r.CompanyName || 'XX').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
+                if (statusFilter !== undefined) {
+                    adminRequestsFilterStatus = statusFilter;
+                    adminRequestsCurrentPage = 1;
+                }
+                const requests = await api('/requests');
+                adminRequestsData = requests; // stores all
+                applyAdminRequestsFilters();
+            } catch (e) {
+                console.error('Load requests:', e);
+            }
+        }
+
+        function applyAdminRequestsFilters() {
+            let filtered = [...adminRequestsData];
+
+            // Filter Status
+            if (adminRequestsFilterStatus && adminRequestsFilterStatus !== 'All') {
+                filtered = filtered.filter(r => r.Status === adminRequestsFilterStatus);
+            }
+
+            // Search Filter
+            if (adminRequestsFilterSearch) {
+                const q = adminRequestsFilterSearch.toLowerCase();
+                filtered = filtered.filter(r =>
+                    (r.CompanyName && r.CompanyName.toLowerCase().includes(q)) ||
+                    (r.GuestName && r.GuestName.toLowerCase().includes(q)) ||
+                    (r.TicketNumber && r.TicketNumber.toLowerCase().includes(q)) ||
+                    (r.ServiceName && r.ServiceName.toLowerCase().includes(q)) ||
+                    (String(r.RequestID).includes(q))
+                );
+            }
+
+            // Sort
+            if (adminRequestsSortBy === 'Terbaru') {
+                filtered.sort((a, b) => new Date(b.CreatedAt || 0) - new Date(a.CreatedAt || 0));
+            } else if (adminRequestsSortBy === 'Terlama') {
+                filtered.sort((a, b) => new Date(a.CreatedAt || 0) - new Date(b.CreatedAt || 0));
+            } else if (adminRequestsSortBy === 'Nilai Tertinggi') {
+                filtered.sort((a, b) => (b.TotalPrice || 0) - (a.TotalPrice || 0));
+            } else if (adminRequestsSortBy === 'Nilai Terendah') {
+                filtered.sort((a, b) => (a.TotalPrice || 0) - (b.TotalPrice || 0));
+            }
+
+            renderAdminRequestsTable(filtered);
+        }
+
+        function renderAdminRequestsTable(filtered) {
+            const tbody = document.getElementById('adminRequestsBody');
+            if (!tbody) return;
+
+            const total = filtered.length;
+            const totalPages = Math.ceil(total / adminRequestsPerPage) || 1;
+            if (adminRequestsCurrentPage > totalPages) adminRequestsCurrentPage = totalPages;
+
+            const startIdx = (adminRequestsCurrentPage - 1) * adminRequestsPerPage;
+            const endIdx = startIdx + adminRequestsPerPage;
+            const paginated = filtered.slice(startIdx, endIdx);
+
+            tbody.innerHTML = '';
+            if (paginated.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400 italic">Tidak ada permintaan ditemukan.</td></tr>`;
+            } else {
+                paginated.forEach(r => {
+                    const initials = (r.CompanyName || r.GuestName || 'XX').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
                     const colors = ['blue', 'purple', 'orange', 'emerald', 'cyan', 'rose'];
                     const clr = colors[r.RequestID % colors.length];
                     const stMap = { 'New Request': 'amber', 'Reviewing': 'slate', 'Negotiation': 'amber', 'Deal': 'emerald', 'Rejected': 'rose', 'Request Data': 'blue' };
                     const stClr = stMap[r.Status] || 'amber';
+
+                    const ticket = r.TicketNumber || 'REQ-' + r.RequestID;
                     tbody.innerHTML += `<tr class="hover:bg-slate-50 transition-colors">
                         <td class="px-6 py-4"><div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-${clr}-100 flex items-center justify-center text-${clr}-600 font-bold text-xs">${initials}</div>
                             <div><div class="font-bold text-slate-800">${r.CompanyName || r.GuestName || '-'}</div>
-                            <div class="text-[10px] text-slate-400">ID: ${r.TicketNumber || 'REQ-' + r.RequestID}</div></div></div></td>
+                            <div class="text-[10px] text-slate-400">ID: ${ticket}</div></div></div></td>
                         <td class="px-6 py-4 text-slate-600">${r.ServiceName || '-'}</td>
                         <td class="px-6 py-4 text-center"><span id="badge-REQ-${r.RequestID}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-${stClr}-50 text-${stClr}-600 border border-${stClr}-100 uppercase tracking-wide">${r.Status}</span></td>
                         <td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1.5">
@@ -3143,7 +3177,46 @@
                             <button onclick="rejectRequest(${r.RequestID})" class="p-1.5 rounded-lg text-rose-500 hover:bg-rose-50 hover:text-rose-700 transition-all" title="Tolak"><span class="material-symbols-outlined text-[20px]">cancel</span></button>
                         </div></td></tr>`;
                 });
-            } catch (e) { console.error('Load requests:', e); }
+            }
+
+            renderAdminRequestsPagination(total, startIdx, Math.min(endIdx, total), totalPages);
+        }
+
+        function renderAdminRequestsPagination(total, startIdx, endIdx, totalPages) {
+            const container = document.getElementById('adminRequestsPaginationContainer');
+            if (!container) return;
+
+            if (total === 0) {
+                container.innerHTML = '<p class="text-xs text-slate-500">Showing 0 results</p>';
+                return;
+            }
+
+            let html = `
+                <p class="text-xs text-slate-500">Showing <span class="font-bold text-slate-800">${startIdx + 1}-${endIdx}</span>
+                    of <span class="font-bold text-slate-800">${total}</span> results</p>
+                <div class="flex gap-1">
+                    <button onclick="adminRequestsCurrentPage = Math.max(1, adminRequestsCurrentPage - 1); applyAdminRequestsFilters();"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-primary transition-all disabled:opacity-50" ${adminRequestsCurrentPage === 1 ? 'disabled' : ''}>
+                        <span class="material-symbols-outlined text-[16px]">chevron_left</span>
+                    </button>
+            `;
+
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === adminRequestsCurrentPage) {
+                    html += `<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary text-white text-xs font-bold shadow-md shadow-primary/20">${i}</button>`;
+                } else {
+                    html += `<button onclick="adminRequestsCurrentPage = ${i}; applyAdminRequestsFilters();" class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 hover:text-primary transition-all">${i}</button>`;
+                }
+            }
+
+            html += `
+                    <button onclick="adminRequestsCurrentPage = Math.min(${totalPages}, adminRequestsCurrentPage + 1); applyAdminRequestsFilters();"
+                        class="w-8 h-8 flex items-center justify-center rounded-lg border border-slate-200 text-slate-400 hover:bg-slate-50 hover:text-primary transition-all disabled:opacity-50" ${adminRequestsCurrentPage === totalPages ? 'disabled' : ''}>
+                        <span class="material-symbols-outlined text-[16px]">chevron_right</span>
+                    </button>
+                </div>
+            `;
+            container.innerHTML = html;
         }
 
         // ===== ACCEPT / REJECT =====
@@ -3336,13 +3409,15 @@
 
         async function saveService(openParamModal = false) {
             const name = document.getElementById('editServiceName')?.value;
+            const categoryName = document.getElementById('editServiceCategory')?.value;
             if (!name) return alert('Nama layanan wajib diisi');
+            if (!categoryName) return alert('Sektor/Bidang wajib dipilih');
             try {
                 let svcId = editingServiceId;
                 if (svcId) {
-                    await api('/services/' + svcId, 'PUT', { ServiceName: name, Description: '', SubCategoryID: 1 });
+                    await api('/services/' + svcId, 'PUT', { ServiceName: name, Description: '', CategoryName: categoryName });
                 } else {
-                    const newSvc = await api('/services', 'POST', { ServiceName: name, Description: '', SubCategoryID: 1 });
+                    const newSvc = await api('/services', 'POST', { ServiceName: name, Description: '', CategoryName: categoryName });
                     svcId = newSvc.ServiceID;
                 }
                 window.currentParamServiceId = svcId; // Save for parameter modal
@@ -3500,9 +3575,18 @@
         }
 
         function renderOfferItems() {
-            const tbody = document.querySelector('#public-content-create table tbody');
+            const tbody = document.getElementById('offerItemsBody');
+            const emptyState = document.getElementById('offerItemsEmptyState');
             if (!tbody) return;
             tbody.innerHTML = '';
+
+            if (offerItems.length === 0) {
+                if (emptyState) emptyState.classList.remove('hidden');
+                return;
+            } else {
+                if (emptyState) emptyState.classList.add('hidden');
+            }
+
             let grandTotal = 0;
             offerItems.forEach((item, i) => {
                 grandTotal += item.SubTotal || 0;
@@ -3511,11 +3595,11 @@
                     <td class="px-6 py-4 font-semibold text-slate-700">${item.ServiceType}</td>
                     <td class="px-6 py-4 text-slate-600 text-xs">${locationHtml}</td>
                     <td class="px-6 py-4 text-slate-600 font-bold text-right">${item.SubTotal > 0 ? 'Rp ' + item.SubTotal.toLocaleString('id-ID') : '-'}</td>
-                    <td class="px-6 py-4 text-right"><button onclick="removeOfferItem(${i})" class="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Hapus"><span class="material-symbols-outlined !text-lg">delete</span></button></td></tr>`;
+                    <td class="px-6 py-4 text-right"><button type="button" onclick="removeOfferItem(${i})" class="p-1.5 text-slate-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-all" title="Hapus"><span class="material-symbols-outlined !text-lg">delete</span></button></td></tr>`;
             });
             if (offerItems.length > 0 && grandTotal > 0) {
                 tbody.innerHTML += `<tr class="bg-emerald-50/50 border-t-2 border-emerald-200">
-                    <td colspan="2" class="px-6 py-4 text-right font-bold text-slate-700 uppercase text-xs tracking-wider">Total Estimasi</td>
+                    <td colspan="2" class="px-6 py-4 text-right font-bold text-slate-700 uppercase text-xs tracking-wider">Total Estimasi Harga</td>
                     <td class="px-6 py-4 text-right font-bold text-lg text-emerald-700">Rp ${grandTotal.toLocaleString('id-ID')}</td>
                     <td></td></tr>`;
             }
@@ -3686,7 +3770,89 @@
         // --- NEW: ADMIN CONFIGURATION MODAL ---
         function openAdminConfigModal() {
             const modal = document.getElementById('adminConfigModal');
-            if (modal) modal.classList.remove('hidden');
+            if (modal) {
+                if (typeof currentUser !== 'undefined' && currentUser) {
+                    document.getElementById('adminConfigFullName').value = currentUser.FullName || '';
+                    document.getElementById('adminConfigEmail').value = currentUser.Email || '';
+                    document.getElementById('adminConfigDisplayTitle').textContent = currentUser.FullName || 'Admin';
+                    document.getElementById('adminConfigDisplayRole').textContent = currentUser.Role || 'Administrator';
+                    document.getElementById('adminConfigCurrPass').value = '';
+                    document.getElementById('adminConfigNewPass').value = '';
+                    document.getElementById('adminConfigConfPass').value = '';
+
+                    const src = localStorage.getItem('sioneProfileImg');
+                    if (src) {
+                        document.getElementById('adminConfigProfileImg').src = src;
+                        document.getElementById('adminConfigProfileImg').classList.remove('hidden');
+                        document.getElementById('adminConfigProfileIcon').classList.add('hidden');
+                    }
+                }
+                modal.classList.remove('hidden');
+            }
+        }
+
+        async function saveAdminConfig() {
+            const name = document.getElementById('adminConfigFullName') ? document.getElementById('adminConfigFullName').value : '';
+            const email = document.getElementById('adminConfigEmail') ? document.getElementById('adminConfigEmail').value : '';
+            const currP = document.getElementById('adminConfigCurrPass') ? document.getElementById('adminConfigCurrPass').value : '';
+            const newP = document.getElementById('adminConfigNewPass') ? document.getElementById('adminConfigNewPass').value : '';
+            const confP = document.getElementById('adminConfigConfPass') ? document.getElementById('adminConfigConfPass').value : '';
+
+            if (newP || confP) {
+                if (newP !== confP) return alert('Konfirmasi password baru tidak cocok!');
+                if (!currP) return alert('Masukkan password saat ini untuk mengganti password!');
+            }
+            // we simulate saving
+            alert('Pengaturan Admin berhasil disimpan!');
+
+            if (typeof currentUser !== 'undefined' && currentUser) {
+                currentUser.FullName = name;
+                currentUser.Email = email;
+
+                // update sidebar or header if it shows name
+                const headerEls = document.querySelectorAll('header .text-slate-700');
+                headerEls.forEach(el => {
+                    if (el.textContent.includes('Administrator') || el.textContent === currentUser.FullName) {
+                        el.textContent = name;
+                    }
+                });
+            }
+
+            closeAdminConfigModal();
+        }
+
+        function previewAdminProfileImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    try {
+                        localStorage.setItem('sioneProfileImg', e.target.result);
+                    } catch (err) {
+                        console.error('Failed to save to localstorage', err);
+                    }
+                    if (document.getElementById('adminConfigProfileImg')) {
+                        document.getElementById('adminConfigProfileImg').src = e.target.result;
+                        document.getElementById('adminConfigProfileImg').classList.remove('hidden');
+                    }
+                    if (document.getElementById('adminConfigProfileIcon')) {
+                        document.getElementById('adminConfigProfileIcon').classList.add('hidden');
+                    }
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function togglePasswordVisibility(id, btn) {
+            const input = document.getElementById(id);
+            if (!input) return;
+            if (input.type === 'password') {
+                input.type = 'text';
+                btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">visibility</span>';
+            } else {
+                input.type = 'password';
+                btn.innerHTML = '<span class="material-symbols-outlined text-[20px]">visibility_off</span>';
+            }
         }
 
         function closeAdminConfigModal() {
@@ -3911,20 +4077,89 @@
         }
 
         // ===== Feature 6: LOAD PORTFOLIO OPTIONS FOR SERVICE MODAL =====
-        async function loadPortfolioOptions(selectedOwner) {
+        async function loadPortfolioOptions(selectedOwner, selectedCategory = '') {
             try {
                 const portfolios = await api('/portfolios');
                 const select = document.getElementById('editServiceOwner');
                 if (!select) return;
                 select.innerHTML = '<option value="">-- Pilih Divisi --</option>';
                 portfolios.forEach(p => {
+                    if (p.PortfolioName.toLowerCase().includes('lintas dbs')) return; // Exclude Lintas DBS
                     const opt = document.createElement('option');
                     opt.value = p.PortfolioName;
                     opt.textContent = p.PortfolioName;
                     if (selectedOwner && p.PortfolioName === selectedOwner) opt.selected = true;
                     select.appendChild(opt);
                 });
+
+                if (selectedOwner) {
+                    loadCategoryOptions(selectedOwner, selectedCategory);
+                } else {
+                    const catSelect = document.getElementById('editServiceCategory');
+                    if (catSelect) catSelect.innerHTML = '<option value="">-- Pilih Bidang / Sektor --</option>';
+                }
             } catch (e) { console.error('Load portfolios:', e); }
+        }
+
+        async function loadCategoryOptions(portfolioName, selectedCategory = '') {
+            try {
+                const select = document.getElementById('editServiceCategory');
+                if (!select) return;
+                select.innerHTML = '<option value="">Memuat...</option>';
+                if (!portfolioName) {
+                    select.innerHTML = '<option value="">-- Pilih Bidang / Sektor --</option>';
+                    return;
+                }
+                const excelCategoriesMapping = {
+                    "DBS Oil Gas & Renewable Energy": [
+                        "Infrastruktur (Sektor Migas & Panas Bumi)",
+                        "Verifikasi",
+                        "Survei Kebumian",
+                        "Inspeksi Pengeboran",
+                        "Konsultansi EBT",
+                        "Sertifikasi Ketenagalistrikan"
+                    ],
+                    "DBS Sustainability & Environment": [
+                        "Infrastruktur (Sektor Naker / Umum)",
+                        "Konsultansi",
+                        "Perizinan",
+                        "SNE (Kelistrikan)"
+                    ],
+                    "DBS Coal & Mineral": [
+                        "Marine Survey",
+                        "Coal & Mineral Handling",
+                        "Studi Kelayakan"
+                    ],
+                    "DBS Infrastructur & Transportasi": [
+                        "Manajemen Aset",
+                        "Engineering",
+                        "Konstruksi",
+                        "Infrastruktur Penunjang"
+                    ],
+                    "DBS Industrial Services": [
+                        "Verifikasi",
+                        "Sertifikasi"
+                    ],
+                    "Lintas DBS (Oil Gas / SNE)": [
+                        "NDT"
+                    ],
+                    "DBS Government & Institution": [
+                        "Konsultansi",
+                        "Verifikasi"
+                    ]
+                };
+
+                const filtered = excelCategoriesMapping[portfolioName] || [];
+
+                select.innerHTML = '<option value="">-- Pilih Bidang / Sektor --</option>';
+                filtered.forEach(c => {
+                    const opt = document.createElement('option');
+                    opt.value = c;
+                    opt.textContent = c;
+                    if (selectedCategory && c === selectedCategory) opt.selected = true;
+                    select.appendChild(opt);
+                });
+            } catch (e) { console.error('Load categories:', e); }
         }
 
         // ===== LOAD BRANCHES TABLE (Configuration tab) =====
@@ -4208,7 +4443,7 @@
         }
 
         // --- NEW: EDIT SERVICE MODAL LOGIC ---
-        function openEditServiceModal(name = '', owner = '', category = 'Migas', status = 'On Progress') {
+        function openEditServiceModal(name = '', owner = '', category = '', status = 'On Progress') {
             const modal = document.getElementById('editServiceModal');
             if (!modal) return;
 
@@ -4220,11 +4455,8 @@
             const nameEl = document.getElementById('editServiceName');
             if (nameEl) nameEl.value = name;
 
-            // Feature 6: Load portfolio dropdown then set selected value
-            loadPortfolioOptions(owner);
-
-            const catEl = document.getElementById('editServiceCategory');
-            if (catEl) catEl.value = category;
+            // Feature 6: Load portfolio dropdown then set selected value. Category will auto-load.
+            loadPortfolioOptions(owner, category);
 
             const statusEl = document.getElementById('editServiceStatus');
             if (statusEl) statusEl.value = status;
@@ -4854,12 +5086,18 @@
                     const isClient = msg.Sender === 'Client';
                     const timeStr = new Date(msg.Timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
+                    const attachmentHtml = msg.AttachmentData ? `<div class="mt-2"><a href="${msg.AttachmentData}" target="_blank" class="inline-flex items-center gap-1 text-[11px] bg-white/20 px-2 py-1 rounded-lg hover:bg-white/30 transition-colors"><span class="material-symbols-outlined text-[14px]">attach_file</span> Lampiran</a></div>` : '';
+                    const inlineAttachmentHtml = msg.AttachmentData ? `<div class="mt-2"><a href="${msg.AttachmentData}" target="_blank" class="inline-flex items-center gap-1 text-[11px] bg-slate-200 px-2 py-1 rounded-lg hover:bg-slate-300 transition-colors text-slate-700"><span class="material-symbols-outlined text-[14px]">attach_file</span> Lampiran</a></div>` : '';
+
                     if (isClient) {
                         body.innerHTML += `
-                        <div class="flex items-start justify-end gap-3">
+                        <div class="flex items-start justify-end gap-3 group">
+                            <button onclick="deleteChatMessage('${msg.MessageID}', false)" class="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1 mt-4" title="Hapus pesan">
+                                <span class="material-symbols-outlined text-[14px]">delete</span>
+                            </button>
                             <div class="space-y-1.5 flex flex-col items-end">
                                 <p class="text-[10px] font-bold text-primary uppercase tracking-tight mr-1">Anda</p>
-                                <div class="bg-primary text-white rounded-2xl rounded-tr-none p-4 max-w-[85%] text-sm leading-relaxed shadow-md break-words">${msg.MessageText}</div>
+                                <div class="bg-primary text-white rounded-2xl rounded-tr-none p-4 max-w-[85%] text-sm leading-relaxed shadow-md break-words">${msg.MessageText || ''}${attachmentHtml}</div>
                                 <span class="text-[10px] text-slate-400 px-1 font-medium text-right flex items-center gap-1.5">${timeStr} <span class="material-symbols-outlined text-[14px] text-primary">done_all</span></span>
                             </div>
                         </div>`;
@@ -4871,7 +5109,7 @@
                             </div>
                             <div class="space-y-1.5">
                                 <p class="text-[10px] font-bold text-slate-400 uppercase tracking-tight ml-1">Admin SI-ONE</p>
-                                <div class="bg-slate-100 text-slate-700 rounded-2xl rounded-tl-none p-4 max-w-[85%] text-sm leading-relaxed shadow-sm border border-slate-200 break-words">${msg.MessageText}</div>
+                                <div class="bg-slate-100 text-slate-700 rounded-2xl rounded-tl-none p-4 max-w-[85%] text-sm leading-relaxed shadow-sm border border-slate-200 break-words">${msg.MessageText || ''}${inlineAttachmentHtml}</div>
                                 <span class="text-[10px] text-slate-400 px-1 font-medium">${timeStr}</span>
                             </div>
                         </div>`;
@@ -4906,18 +5144,41 @@
             loadPublicChatMessages();
         }
 
+        let publicChatAttachmentBase64 = null;
+        function handlePublicChatAttachment(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                publicChatAttachmentBase64 = null;
+                document.getElementById('publicChatAttachmentName').classList.add('hidden');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) return alert('File terlalu besar (Maks 5MB)');
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                publicChatAttachmentBase64 = e.target.result;
+                const nameEl = document.getElementById('publicChatAttachmentName');
+                nameEl.textContent = file.name;
+                nameEl.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
         async function sendPublicChatMessage() {
             if (!currentChatReqID) return;
             const input = document.getElementById('chatModalInput');
             const msg = input?.value.trim();
-            if (!msg) return;
+            if (!msg && !publicChatAttachmentBase64) return;
 
             try {
                 await api('/requests/' + currentChatReqID + '/messages', 'POST', {
                     Sender: 'Client',
-                    MessageText: msg
+                    MessageText: msg || '',
+                    AttachmentData: publicChatAttachmentBase64 || null
                 });
-                input.value = '';
+                if (input) input.value = '';
+                publicChatAttachmentBase64 = null;
+                document.getElementById('publicChatAttachmentName').classList.add('hidden');
+                document.getElementById('publicChatAttachment').value = '';
                 loadPublicChatMessages();
             } catch (e) {
                 alert('Gagal mengirim pesan: ' + e.message);
@@ -4993,10 +5254,18 @@
                     const isAdmin = msg.Sender === 'Admin';
                     const timeStr = new Date(msg.Timestamp).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
+                    const attachmentHtml = msg.AttachmentData ? `<div class="mt-2"><a href="${msg.AttachmentData}" target="_blank" class="inline-flex items-center gap-1 text-[11px] bg-white/20 px-2 py-1 rounded-lg hover:bg-white/30 transition-colors"><span class="material-symbols-outlined text-[14px]">attach_file</span> Lampiran</a></div>` : '';
+                    const inlineAttachmentHtml = msg.AttachmentData ? `<div class="mt-2"><a href="${msg.AttachmentData}" target="_blank" class="inline-flex items-center gap-1 text-[11px] bg-slate-200 px-2 py-1 rounded-lg hover:bg-slate-300 transition-colors text-slate-700"><span class="material-symbols-outlined text-[14px]">attach_file</span> Lampiran</a></div>` : '';
+
                     if (isAdmin) {
                         body.innerHTML += `
-                        <div class="flex flex-col items-end ml-auto max-w-[80%]">
-                            <div class="bg-primary text-white p-3 rounded-2xl rounded-tr-none text-sm shadow-md break-words">${msg.MessageText}</div>
+                        <div class="flex flex-col items-end ml-auto max-w-[80%] group">
+                            <div class="flex items-center gap-2">
+                                <button onclick="deleteChatMessage('${msg.MessageID}', true)" class="text-slate-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100 p-1" title="Hapus pesan">
+                                    <span class="material-symbols-outlined text-[14px]">delete</span>
+                                </button>
+                                <div class="bg-primary text-white p-3 rounded-2xl rounded-tr-none text-sm shadow-md break-words">${msg.MessageText || ''}${attachmentHtml}</div>
+                            </div>
                             <div class="flex items-center gap-1 mt-1 mr-1">
                                 <span class="text-[10px] text-slate-400">${timeStr}</span>
                                 <span class="material-symbols-outlined text-[14px] text-blue-500">done_all</span>
@@ -5006,7 +5275,7 @@
                         body.innerHTML += `
                         <div class="flex flex-col items-start max-w-[80%]">
                             <div class="flex items-center gap-1 mb-1 ml-1"><span class="text-[10px] font-bold text-slate-500 uppercase">Klien</span></div>
-                            <div class="bg-slate-100 text-slate-800 p-3 rounded-2xl rounded-tl-none text-sm shadow-sm break-words">${msg.MessageText}</div>
+                            <div class="bg-slate-100 text-slate-800 p-3 rounded-2xl rounded-tl-none text-sm shadow-sm break-words">${msg.MessageText || ''}${inlineAttachmentHtml}</div>
                             <span class="text-[10px] text-slate-400 mt-1 ml-1">${timeStr}</span>
                         </div>`;
                     }
@@ -5017,22 +5286,56 @@
             }
         }
 
+        let adminChatAttachmentBase64 = null;
+        function handleAdminChatAttachment(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                adminChatAttachmentBase64 = null;
+                document.getElementById('adminChatAttachmentName').classList.add('hidden');
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) return alert('File terlalu besar (Maks 5MB)');
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                adminChatAttachmentBase64 = e.target.result;
+                const nameEl = document.getElementById('adminChatAttachmentName');
+                nameEl.textContent = file.name;
+                nameEl.classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        }
+
         async function sendAdminChatMessage() {
             if (!currentAdminChatReqID) return;
             const input = document.getElementById('adminChatInput');
             const msg = input?.value.trim();
-            if (!msg) return;
+            if (!msg && !adminChatAttachmentBase64) return;
 
             try {
                 // Post to Backend
                 await api('/requests/' + currentAdminChatReqID + '/messages', 'POST', {
                     Sender: 'Admin',
-                    MessageText: msg
+                    MessageText: msg || '',
+                    AttachmentData: adminChatAttachmentBase64 || null
                 });
-                input.value = '';
+                if (input) input.value = '';
+                adminChatAttachmentBase64 = null;
+                document.getElementById('adminChatAttachmentName').classList.add('hidden');
+                document.getElementById('adminChatAttachment').value = '';
                 loadAdminChatMessages();
             } catch (e) {
                 alert('Gagal mengirim pesan: ' + e.message);
+            }
+        }
+
+        async function deleteChatMessage(id, isAdmin) {
+            if (!confirm('Hapus pesan ini?')) return;
+            try {
+                await api('/messages/' + id, 'DELETE');
+                if (isAdmin) loadAdminChatMessages();
+                else loadPublicChatMessages();
+            } catch (e) {
+                alert('Gagal hapus pesan: ' + e.message);
             }
         }
 
