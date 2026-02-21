@@ -1293,79 +1293,21 @@
                                 <tr
                                     class="bg-slate-50 text-slate-500 uppercase text-[11px] font-bold tracking-widest border-y border-slate-200">
                                     <th class="px-6 py-4">Nama Pengguna</th>
-                                    <th class="px-6 py-4">Role</th>
-                                    <th class="px-6 py-4">Cabang / Unit</th>
-                                    <th class="px-6 py-4 text-center">Status</th>
+                                    <th class="px-6 py-4">Role / Hak Akses</th>
+                                    <th class="px-6 py-4">Email & WA</th>
                                     <th class="px-6 py-4 text-center">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-200 text-sm">
-                                <tr class="hover:bg-slate-50/80 transition-colors group">
-                                    <td class="px-6 py-4 font-semibold text-slate-800">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs">
-                                                AD</div>
-                                            <span>Admin Pusat</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4"><span
-                                            class="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">Super
-                                            Admin</span></td>
-                                    <td class="px-6 py-4 text-slate-600">Kantor Pusat</td>
-                                    <td class="px-6 py-4 text-center"><span
-                                            class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex justify-center gap-2">
-                                            <button
-                                                class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"><span
-                                                    class="material-symbols-outlined text-[20px]">edit</span></button>
-                                            <button
-                                                class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"><span
-                                                    class="material-symbols-outlined text-[20px]">delete</span></button>
-                                        </div>
-                                    </td>
-                                </tr>
-                                <tr class="hover:bg-slate-50/80 transition-colors group">
-                                    <td class="px-6 py-4 font-semibold text-slate-800">
-                                        <div class="flex items-center gap-3">
-                                            <div
-                                                class="w-8 h-8 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold text-xs">
-                                                AB</div>
-                                            <span>Admin Balikpapan</span>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4"><span
-                                            class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold">Admin
-                                            Cabang</span></td>
-                                    <td class="px-6 py-4 text-slate-600">Cabang Balikpapan</td>
-                                    <td class="px-6 py-4 text-center"><span
-                                            class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        <div class="flex justify-center gap-2">
-                                            <button
-                                                class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"><span
-                                                    class="material-symbols-outlined text-[20px]">edit</span></button>
-                                            <button
-                                                class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"><span
-                                                    class="material-symbols-outlined text-[20px]">delete</span></button>
-                                        </div>
-                                    </td>
+                            <tbody id="usersTableBody" class="divide-y divide-slate-200 text-sm">
+                                <tr>
+                                    <td colspan="4" class="px-6 py-8 text-center text-slate-400 italic">Memuat data
+                                        pengguna...</td>
                                 </tr>
                             </tbody>
                         </table>
                         <div
                             class="px-6 py-4 border-t border-slate-200 bg-slate-50/30 flex justify-between items-center text-xs text-slate-500">
-                            <span class="font-medium">Menampilkan 1-2 dari 15 pengguna</span>
-                            <div class="flex gap-2">
-                                <button
-                                    class="px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors disabled:opacity-50"
-                                    disabled="">Previous</button>
-                                <button
-                                    class="px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors">Next</button>
-                            </div>
+                            <span id="userCountInfo" class="font-medium">Memuat...</span>
                         </div>
                     </div>
                 </div>
@@ -2757,8 +2699,8 @@
     <div id="notificationSettingsModal"
         class="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
         <div
-            class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-100">
-            <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white">
+            class="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all scale-100 flex flex-col max-h-[90vh]">
+            <div class="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-white shrink-0">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-500">
                         <span class="material-symbols-outlined">settings</span>
@@ -2773,7 +2715,7 @@
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <div class="p-6 space-y-6">
+            <div class="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
                 <!-- Channels -->
                 <div class="space-y-4">
                     <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider">Channels</h4>
@@ -2808,6 +2750,24 @@
                             <input type="checkbox" checked class="sr-only peer">
                             <div
                                 class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary">
+                            </div>
+                        </label>
+                    </div>
+
+                    <!-- WhatsApp Notification (NEW) -->
+                    <div
+                        class="flex items-center justify-between p-3 rounded-xl border border-slate-100 hover:border-slate-200 transition-colors">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined text-slate-400">forum</span>
+                            <div>
+                                <p class="text-sm font-bold text-slate-700">WhatsApp</p>
+                                <p class="text-[10px] text-slate-500">Receive alerts via WA message</p>
+                            </div>
+                        </div>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer">
+                            <div
+                                class="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500">
                             </div>
                         </label>
                     </div>
@@ -2846,7 +2806,8 @@
                     </label>
                 </div>
             </div>
-            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+
+            <div class="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
                 <button onclick="closeNotificationSettingsModal()"
                     class="px-5 py-2.5 text-slate-500 font-bold text-sm hover:bg-slate-100 rounded-xl transition-all">Cancel</button>
                 <button onclick="closeNotificationSettingsModal(); alert('Notification Preferences Saved!')"
@@ -2989,12 +2950,12 @@
         </div>
     </div>
 
-    <!-- Add User Access Modal (NEW) -->
+    <!-- Add User Access Modal (UPDATED) -->
     <div id="addAksesModal"
         class="fixed inset-0 z-[130] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm hidden">
         <div
-            class="bg-white w-full max-w-lg rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all">
-            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white">
+            class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl border border-slate-200 overflow-hidden transform transition-all flex flex-col max-h-[90vh]">
+            <div class="px-8 py-6 border-b border-slate-100 flex justify-between items-center bg-white shrink-0">
                 <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                     Manajemen Pengguna
                 </h3>
@@ -3002,89 +2963,95 @@
                     <span class="material-symbols-outlined">close</span>
                 </button>
             </div>
-            <form class="p-8 space-y-5" id="formTambahAkses"
-                onsubmit="event.preventDefault(); addAksesToTable(this); closeAddAksesModal();">
-                <div class="space-y-4">
-                    <!-- Username -->
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="username">Username</label>
-                        <input
-                            class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
-                            id="username" placeholder="Buat username unik" type="text" required />
-                    </div>
+            <div class="p-8 overflow-y-auto custom-scrollbar flex-1">
+                <form class="space-y-5" id="formTambahAkses"
+                    onsubmit="event.preventDefault(); addAksesToTable(this); closeAddAksesModal();">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <!-- Username -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                                for="username">Username</label>
+                            <input
+                                class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
+                                id="username" placeholder="Buat username unik" type="text" required />
+                        </div>
 
-                    <!-- Password -->
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="password">Password</label>
-                        <input
-                            class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
-                            id="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" type="password" required />
-                    </div>
+                        <!-- Password -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                                for="password">Password</label>
+                            <input
+                                class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
+                                id="password" placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" type="password" required />
+                        </div>
 
-                    <!-- Nama Lengkap -->
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="fullname">Nama
-                            Lengkap</label>
-                        <input
-                            class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
-                            id="fullname" placeholder="Nama lengkap sesuai KTP" type="text" required />
-                    </div>
+                        <!-- Nama Lengkap -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="fullname">Nama
+                                Lengkap</label>
+                            <input
+                                class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
+                                id="fullname" placeholder="Nama lengkap sesuai KTP" type="text" required />
+                        </div>
 
-                    <!-- Email (NEW) -->
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="email">Email</label>
-                        <input
-                            class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
-                            id="email" placeholder="Alamat Email (ntuk Notifikasi)" type="email" />
-                    </div>
+                        <!-- Email (NEW) -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="email">Email</label>
+                            <input
+                                class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
+                                id="email" placeholder="Alamat Email (ntuk Notifikasi)" type="email" />
+                        </div>
 
-                    <!-- WhatsApp (NEW) -->
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="phone_wa">WhatsApp</label>
-                        <input
-                            class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
-                            id="phone_wa" placeholder="Nomor WhatsApp (misal: 081234567890)" type="text" />
-                    </div>
+                        <!-- WhatsApp (NEW) -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5"
+                                for="phone_wa">WhatsApp</label>
+                            <input
+                                class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
+                                id="phone_wa" placeholder="Nomor WhatsApp (misal: 081234567890)" type="text" />
+                        </div>
 
-                    <!-- Role -->
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="role">Role</label>
-                        <div class="relative">
-                            <select
-                                class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all appearance-none cursor-pointer bg-white"
-                                id="role" required>
-                                <option value="">-- Pilih Role --</option>
-                                <option value="admin_pusat">Admin Pusat</option>
-                                <option value="admin_cabang">Admin Cabang</option>
-                                <option value="petugas">Petugas Inspeksi</option>
-                                <option value="viewer">Viewer</option>
-                            </select>
-                            <span
-                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">expand_more</span>
+                        <!-- Role -->
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="role">Role</label>
+                            <div class="relative">
+                                <select
+                                    class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all appearance-none cursor-pointer bg-white"
+                                    id="role" required>
+                                    <option value="">-- Pilih Role --</option>
+                                    <option value="admin_pusat">Admin Pusat</option>
+                                    <option value="admin_cabang">Admin Cabang</option>
+                                    <option value="petugas">Petugas Inspeksi</option>
+                                    <option value="viewer">Viewer</option>
+                                </select>
+                                <span
+                                    class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">expand_more</span>
+                            </div>
+                        </div>
+
+                        <!-- Cabang / Divisi (Editable Input) -->
+                        <div class="md:col-span-2">
+                            <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="unit">Cabang /
+                                Divisi</label>
+                            <input
+                                class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
+                                id="unit" placeholder="Ketik nama Cabang atau Divisi" type="text" required />
+                            <p class="text-[11px] text-slate-500 mt-1 ml-1">*Ketik manual nama unit kerja pengguna</p>
                         </div>
                     </div>
+            </div>
 
-                    <!-- Cabang / Divisi (Editable Input) -->
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5" for="unit">Cabang /
-                            Divisi</label>
-                        <input
-                            class="w-full px-4 py-2.5 rounded-lg border border-slate-300 focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all placeholder:text-slate-400"
-                            id="unit" placeholder="Ketik nama Cabang atau Divisi" type="text" required />
-                        <p class="text-[11px] text-slate-500 mt-1 ml-1">*Ketik manual nama unit kerja pengguna</p>
-                    </div>
-                </div>
-
-                <div class="pt-4 flex justify-end gap-3 border-t border-slate-100 mt-6">
-                    <button type="button" onclick="closeAddAksesModal()"
-                        class="px-6 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
-                        Batal
-                    </button>
-                    <button type="submit"
-                        class="px-8 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-blue-900 rounded-lg shadow-md transition-all">
-                        Simpan
-                    </button>
-                </div>
+            <!-- Modal Body End -> Footer Start -->
+            <div class="px-8 py-5 bg-slate-50 border-t border-slate-100 flex justify-end gap-3 shrink-0">
+                <button type="button" onclick="closeAddAksesModal()"
+                    class="px-6 py-2.5 text-sm font-semibold text-slate-600 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                    Batal
+                </button>
+                <button type="submit" form="formTambahAkses"
+                    class="px-8 py-2.5 text-sm font-semibold text-white bg-primary hover:bg-blue-900 rounded-lg shadow-md transition-all">
+                    Simpan
+                </button>
+            </div>
             </form>
         </div>
     </div>
@@ -4117,8 +4084,16 @@
                 if (aksesTab) aksesTab.className = "px-6 py-4 text-sm font-semibold border-b-[3px] border-primary text-primary flex items-center gap-2 transition-colors whitespace-nowrap";
                 if (aksesContent) aksesContent.classList.remove('hidden');
                 if (btnText) btnText.innerText = "Tambah User";
+                if (typeof loadUsersTable === 'function') loadUsersTable();
             }
         }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // In case it loads with akses tab active implicitly
+            if (typeof loadUsersTable === 'function') {
+                loadUsersTable();
+            }
+        });
 
         // --- NEW: CONFIGURATION MODAL LOGIC ---
         function handleAddConfig() {
@@ -5555,7 +5530,7 @@
                         <td class="px-6 py-4 text-center"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span></td>
                         <td class="px-6 py-4">
                             <div class="flex justify-center gap-2">
-                                <button class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                                <button onclick="editUser(this)" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
                                 <button onclick="this.closest('tr').remove()" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
                             </div>
                         </td>
@@ -5571,8 +5546,139 @@
                 }
 
             } catch (err) {
-                alert('Gagal menambahkan pengguna: ' + err.message);
+                alert('Gagal menambahkan/mengupdate pengguna: ' + err.message);
             }
+        }
+
+        // ===== LOAD USERS TABLE =====
+        async function loadUsersTable() {
+            try {
+                const users = await api('/users');
+                const tbody = document.getElementById('usersTableBody');
+                const countInfo = document.getElementById('userCountInfo');
+                if (!tbody) return;
+
+                tbody.innerHTML = '';
+                if (users.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="px-6 py-8 text-center text-slate-400 italic">Belum ada data pengguna</td></tr>';
+                    if (countInfo) countInfo.textContent = '0 pengguna';
+                    return;
+                }
+
+                users.forEach(u => {
+                    const initials = (u.FullName || 'U').split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+                    const colors = ['bg-primary/10 text-primary', 'bg-orange-100 text-orange-600', 'bg-emerald-100 text-emerald-600', 'bg-violet-100 text-violet-600'];
+                    const colorClass = colors[Math.floor(Math.random() * colors.length)];
+
+                    let roleBadge = '<span class="px-2.5 py-1 bg-slate-100 text-slate-600 rounded-full text-xs font-bold">Viewer</span>';
+                    let roleDisplay = 'Sistem Viewer';
+                    if (u.Role === 'admin_pusat' || u.Role === 'AdminDBS') { roleBadge = '<span class="px-2.5 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold">Super Admin</span>'; roleDisplay = 'admin_pusat'; }
+                    if (u.Role === 'admin_cabang') { roleBadge = '<span class="px-2.5 py-1 bg-orange-100 text-orange-700 rounded-full text-xs font-bold">Admin Cabang</span>'; roleDisplay = 'admin_cabang'; }
+                    if (u.Role === 'petugas') { roleBadge = '<span class="px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">Petugas Lapangan</span>'; roleDisplay = 'petugas'; }
+
+                    const tr = document.createElement('tr');
+                    tr.className = 'hover:bg-slate-50/80 transition-colors group';
+                    tr.innerHTML = `
+                        <td class="px-6 py-4 font-semibold text-slate-800">
+                            <div class="flex items-center gap-3">
+                                <div class="w-8 h-8 rounded-full ${colorClass} flex items-center justify-center font-bold text-xs">${initials}</div>
+                                <div>
+                                    <span class="block">${u.FullName}</span>
+                                    <span class="text-[10px] text-slate-400 font-normal">@${u.Username}</span>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">${roleBadge}</td>
+                        <td class="px-6 py-4">
+                            <div class="text-xs text-slate-600 flex flex-col gap-0.5">
+                                <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">mail</span> ${u.Email || '-'}</span>
+                                <span class="flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">forum</span> ${u.PhoneWA || '-'}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 hidden js-hidden-data" data-userid="${u.UserID}" data-role="${roleDisplay}"></td>
+                        <td class="px-6 py-4">
+                            <div class="flex justify-center gap-2">
+                                <button onclick="editUser(this)" class="p-1.5 text-amber-500 hover:bg-amber-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                                <button onclick="deleteUser(${u.UserID})" class="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                if (countInfo) countInfo.textContent = `Menampilkan ${users.length} pengguna`;
+            } catch (err) {
+                console.error('Error loading users:', err);
+                const tbody = document.getElementById('usersTableBody');
+                if (tbody) tbody.innerHTML = `<tr><td colspan="4" class="px-6 py-8 text-center text-rose-500 font-bold">Gagal memuat data</td></tr>`;
+            }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Hapus pengguna ini?')) return;
+            try {
+                await api('/users/' + id, 'DELETE');
+                loadUsersTable();
+            } catch (e) {
+                alert(e.message);
+            }
+        }
+
+        // Ensure load is called on config tab switching
+        const origSwitchTabConfig = window.switchTabConfig;
+        window.switchTabConfig = function (tabId, element) {
+            if (origSwitchTabConfig) origSwitchTabConfig(tabId, element);
+            if (tabId === 'akses') {
+                loadUsersTable();
+            }
+        }
+
+
+        // ===== EDIT USER =====
+        function editUser(btn) {
+            const tr = btn.closest('tr');
+
+            // If it's a dynamic row (from addAksesToTable direct injection without refresh)
+            let emailTxt = '';
+            let waTxt = '';
+            let roleValue = 'viewer';
+            let fullname = '';
+
+            // Check if it's the new DB-loaded row mapping
+            const hiddenData = tr.querySelector('.js-hidden-data');
+            if (hiddenData) {
+                fullname = tr.querySelector('td:nth-child(1) span.block').innerText;
+                roleValue = hiddenData.dataset.role;
+                const badges = tr.querySelectorAll('td:nth-child(3) span.flex');
+                if (badges.length > 0) {
+                    emailTxt = badges[0].innerText.trim();
+                    waTxt = badges[1].innerText.trim();
+                }
+            } else {
+                // Fallback for simple injected row
+                fullname = tr.querySelector('td:nth-child(1) span').innerText;
+                const roleText = tr.querySelector('td:nth-child(2) span').innerText;
+                if (roleText.includes('Super Admin')) roleValue = 'admin_pusat';
+                else if (roleText.includes('Admin Cabang')) roleValue = 'admin_cabang';
+                else if (roleText.includes('Petugas')) roleValue = 'petugas';
+            }
+
+            document.getElementById('fullname').value = fullname;
+            document.getElementById('unit').value = '-';
+            document.getElementById('role').value = roleValue;
+
+            document.getElementById('email').value = (emailTxt === '-') ? '' : emailTxt;
+            document.getElementById('phone_wa').value = (waTxt === '-') ? '' : waTxt;
+
+            // Generate dummy username based on fullname
+            document.getElementById('username').value = fullname.split(' ')[0].toLowerCase() + Math.floor(Math.random() * 100);
+            document.getElementById('password').value = '********'; // placeholder
+
+            // Hide the row since we will re-add it on save (simple edit flow)
+            tr.dataset.editing = 'true';
+            tr.style.display = 'none';
+
+            openAddAksesModal();
         }
 
         // ===== SATUAN LAINNYA TOGGLE =====

@@ -5,6 +5,22 @@ const express = require('express');
 const sql = require('mssql');
 const cors = require('cors');
 const path = require('path');
+const nodemailer = require('nodemailer');
+
+// Set up Nodemailer with Ethereal (Mock Email Service)
+let emailTransporter = null;
+nodemailer.createTestAccount().then(account => {
+    emailTransporter = nodemailer.createTransport({
+        host: account.smtp.host,
+        port: account.smtp.port,
+        secure: account.smtp.secure,
+        auth: {
+            user: account.user,
+            pass: account.pass
+        }
+    });
+    console.log(`📧 Ethereal Email Ready: ${account.user}`);
+}).catch(console.error);
 
 const app = express();
 const port = 3000;
@@ -56,12 +72,33 @@ async function getPool() {
 async function createNotification(title, message, type, relatedId) {
     try {
         const p = await getPool();
+        // Insert to DB
         await p.request()
             .input('title', sql.NVarChar, title)
             .input('msg', sql.NVarChar, message)
             .input('type', sql.NVarChar, type)
             .input('relId', sql.Int, relatedId || null)
             .query(`INSERT INTO Notifications (Title, Message, Type, RelatedID) VALUES (@title, @msg, @type, @relId)`);
+
+        // Dispatch Emall and WA to internal users (Admins)
+        const admins = await p.request().query("SELECT Email, PhoneWA FROM AppUsers WHERE Email IS NOT NULL OR PhoneWA IS NOT NULL");
+        for (let admin of admins.recordset) {
+            // Simulated WhatsApp Send
+            if (admin.PhoneWA) {
+                console.log(`\n💬 [WHATSAPP OUTBOUND] => ${admin.PhoneWA}\nTitle: ${title}\nMsg: ${message}\n`);
+            }
+
+            // Actual Email Send (via Ethereal mock)
+            if (admin.Email && emailTransporter) {
+                const info = await emailTransporter.sendMail({
+                    from: '"SI-ONE Notifications" <system@sione-ptsi.com>',
+                    to: admin.Email,
+                    subject: `[SI-ONE] ${title}`,
+                    text: `${message}\n\nLihat detail di: http://localhost:3000/app`
+                });
+                console.log(`📧 [EMAIL OUTBOUND] => ${admin.Email}\nPreview URL: ${nodemailer.getTestMessageUrl(info)}\n`);
+            }
+        }
     } catch (err) {
         console.error('Failed to create notification:', err);
     }
@@ -923,6 +960,10 @@ app.put('/api/requests/:id/status', async (req, res) => {
         if (TaxAmount !== undefined) { setClauses.push('TaxAmount = @tax'); request.input('tax', sql.Decimal(18, 2), TaxAmount); }
         if (GrandTotal !== undefined) { setClauses.push('GrandTotal = @grand'); request.input('grand', sql.Decimal(18, 2), GrandTotal); }
         await request.query(`UPDATE TransactionHeader SET ${setClauses.join(', ')} WHERE RequestID = @id`);
+
+        // Trigger notification
+        await createNotification('Status Update', `Status permintaan #${req.params.id} diubah menjadi ${Status}`, 'Status Update', req.params.id);
+
         res.json({ message: 'Status updated to ' + Status });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -934,7 +975,7 @@ app.put('/api/requests/:id/status', async (req, res) => {
 // =====================================================================
 app.listen(port, async () => {
     console.log('--------------------------------------------------');
-    console.log(`🚀 Server SI-ONE running at http://localhost:${port}`);
+    console.log(`🚀 Server SI - ONE running at http://localhost:${port}`);
     console.log('⏳ Connecting to SQL Server...');
     console.log('--------------------------------------------------');
 
