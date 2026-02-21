@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html class="light" lang="id"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Counter-Offer Comparison - SI-ONE</title>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,typography"></script>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        primary: "#3b82f6", // Vibrant blue for primary actions
+                        "background-light": "#f1f3f9",
+                        "background-dark": "#0f172a",
+                        "surface-light": "#ffffff",
+                        "surface-dark": "#1e293b",
+                        "accent-gold": "#f59e0b",
+                        "accent-teal": "#14b8a6",
+                        "accent-red": "#ef4444",
+                    },
+                    fontFamily: {
+                        display: ["Inter", "sans-serif"],
+                        sans: ["Inter", "sans-serif"],
+                    },
+                    borderRadius: {
+                        DEFAULT: "0.5rem",
+                        'xl': '1rem',
+                        '2xl': '1.5rem',
+                    },
+                },
+            },
+        };
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark min-h-screen transition-colors duration-200">
+<div class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+<div class="bg-surface-light dark:bg-surface-dark w-full max-w-6xl max-h-[90vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-slate-200 dark:border-slate-700">
+<div class="px-8 py-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-slate-50/50 dark:bg-slate-800/50">
+<div>
+<h1 class="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-3">
+<span class="bg-primary/10 text-primary p-2 rounded-lg">
+<i class="material-icons">compare_arrows</i>
+</span>
+                        Counter-Offer Comparison
+                    </h1>
+<p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Review and compare the client's counter-offer against our initial proposal.</p>
+</div>
+<button class="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors">
+<i class="material-icons text-3xl">close</i>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-8 custom-scrollbar">
+<div class="grid grid-cols-12 gap-4 pb-4 mb-2 border-b border-slate-200 dark:border-slate-700 text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-4">
+<div class="col-span-5">Items &amp; Parameters</div>
+<div class="col-span-3 text-right">Harga Awal (Admin)</div>
+<div class="col-span-4 text-right">Harga Klien (Counter)</div>
+</div>
+<div class="mb-8">
+<div class="bg-slate-50 dark:bg-slate-800/30 px-4 py-2 rounded-lg mb-3">
+<h3 class="text-sm font-bold text-slate-800 dark:text-slate-200">Item 1: Sertifikasi Instalasi Penyalur Petir</h3>
+</div>
+<div class="space-y-2">
+<div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors">
+<div class="col-span-5">
+<p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Lokasi</p>
+<p class="text-xs text-slate-500">Jl. Gajah Mada No. 123, Jakarta Barat</p>
+</div>
+<div class="col-span-3 text-right font-mono text-sm text-slate-600 dark:text-slate-400">12.000.000</div>
+<div class="col-span-4 flex items-center justify-end gap-3">
+<span class="font-mono text-sm font-bold text-slate-900 dark:text-white">10.000.000</span>
+<span class="text-[10px] px-2 py-0.5 bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded-full font-bold">-16.6%</span>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors">
+<div class="col-span-5">
+<p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Spesifikasi Alat</p>
+<p class="text-xs text-slate-500">Kurn R-150</p>
+</div>
+<div class="col-span-3 text-right font-mono text-sm text-slate-600 dark:text-slate-400">5.000.000</div>
+<div class="col-span-4 flex items-center justify-end gap-3">
+<span class="font-mono text-sm font-bold text-slate-900 dark:text-white">5.000.000</span>
+<span class="text-[10px] px-2 py-0.5 bg-slate-100 text-slate-500 dark:bg-slate-700 dark:text-slate-400 rounded-full font-bold">0%</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mb-8">
+<div class="bg-slate-50 dark:bg-slate-800/30 px-4 py-2 rounded-lg mb-3">
+<h3 class="text-sm font-bold text-slate-800 dark:text-slate-200">Item 2: NDT Radiography</h3>
+</div>
+<div class="space-y-2">
+<div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors">
+<div class="col-span-5">
+<p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Lokasi</p>
+<p class="text-xs text-slate-500">Cilegon Site</p>
+</div>
+<div class="col-span-3 text-right font-mono text-sm text-slate-600 dark:text-slate-400">12.500.000</div>
+<div class="col-span-4 flex items-center justify-end gap-3">
+<span class="font-mono text-sm font-bold text-slate-900 dark:text-white">12.000.000</span>
+<span class="text-[10px] px-2 py-0.5 bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded-full font-bold">-4.0%</span>
+</div>
+</div>
+<div class="grid grid-cols-12 gap-4 px-4 py-3 items-center hover:bg-slate-50 dark:hover:bg-slate-800/50 rounded-xl transition-colors">
+<div class="col-span-5">
+<p class="text-sm font-semibold text-slate-700 dark:text-slate-300">Parameter Jumlah Spot</p>
+<p class="text-xs text-slate-500">120 Spots</p>
+</div>
+<div class="col-span-3 text-right font-mono text-sm text-slate-600 dark:text-slate-400">250.000.000</div>
+<div class="col-span-4 flex items-center justify-end gap-3">
+<span class="font-mono text-sm font-bold text-slate-900 dark:text-white">210.000.000</span>
+<span class="text-[10px] px-2 py-0.5 bg-red-100 text-red-600 dark:bg-red-900/30 dark:text-red-400 rounded-full font-bold">-16.0%</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 border-t border-slate-200 dark:border-slate-700 pt-8">
+<div class="grid grid-cols-12 gap-8">
+<div class="col-span-6">
+<div class="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-xl border border-blue-100 dark:border-blue-900/50">
+<h4 class="text-xs font-bold text-blue-800 dark:text-blue-300 uppercase tracking-widest mb-2">Catatan Negosiasi</h4>
+<p class="text-sm text-blue-700/80 dark:text-blue-400 leading-relaxed">
+                                    Klien meminta pemotongan biaya pada parameter Lokasi dan Jumlah Spot Radiography dikarenakan volume pekerjaan yang berkelanjutan selama 6 bulan ke depan.
+                                </p>
+</div>
+</div>
+<div class="col-span-6 space-y-3">
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500 dark:text-slate-400">Subtotal Awal</span>
+<span class="font-mono font-medium text-slate-700 dark:text-slate-300">450.000.000</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500 dark:text-slate-400">Subtotal Client Counter</span>
+<span class="font-mono font-medium text-slate-700 dark:text-slate-300">410.000.000</span>
+</div>
+<div class="flex justify-between items-center text-sm">
+<span class="text-slate-500 dark:text-slate-400">Total PPN (11%)</span>
+<span class="font-mono font-medium text-slate-700 dark:text-slate-300">45.100.000</span>
+</div>
+<div class="pt-3 border-t border-slate-200 dark:border-slate-700 flex justify-between items-end">
+<div>
+<span class="block text-xs font-bold text-slate-400 dark:text-slate-500 uppercase">Grand Total (Incl. Tax)</span>
+<span class="text-2xl font-black text-slate-900 dark:text-white font-mono">455.100.000</span>
+</div>
+<div class="text-right">
+<span class="block text-[10px] font-bold text-red-500 uppercase">Margin Impact</span>
+<span class="text-lg font-bold text-red-500 font-mono">-40.000.000</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="px-8 py-6 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-slate-800 flex flex-wrap gap-4 justify-end">
+<button class="px-6 py-2.5 rounded-lg border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-300 font-bold text-sm hover:bg-slate-100 dark:hover:bg-slate-700 transition-all flex items-center gap-2">
+<i class="material-icons text-base">refresh</i>
+                    Negosiasi Ulang
+                </button>
+<button class="px-6 py-2.5 rounded-lg border border-accent-red/30 text-accent-red font-bold text-sm hover:bg-accent-red/10 transition-all flex items-center gap-2">
+<i class="material-icons text-base">close</i>
+                    Reject
+                </button>
+<button class="px-8 py-2.5 rounded-lg bg-primary text-white font-bold text-sm hover:bg-blue-600 shadow-lg shadow-primary/20 transition-all flex items-center gap-2">
+<i class="material-icons text-base">check_circle</i>
+                    Deal, Generate PO &amp; Send to Client
+                </button>
+</div>
+</div>
+</div>
+<div class="p-8 filter blur-md opacity-20 pointer-events-none">
+<header class="flex justify-between items-center mb-8">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-slate-300 rounded-full"></div>
+<div class="h-8 w-48 bg-slate-300 rounded"></div>
+</div>
+</header>
+<div class="grid grid-cols-12 gap-8">
+<aside class="col-span-2 space-y-4">
+<div class="h-10 bg-slate-300 rounded w-full"></div>
+<div class="h-10 bg-slate-300 rounded w-full"></div>
+<div class="h-10 bg-slate-300 rounded w-full"></div>
+</aside>
+<main class="col-span-10">
+<div class="h-12 bg-slate-300 rounded w-1/4 mb-8"></div>
+<div class="bg-white rounded-xl h-96 w-full"></div>
+</main>
+</div>
+</div>
+<button class="fixed bottom-6 right-6 w-12 h-12 bg-white dark:bg-slate-800 rounded-full shadow-lg border border-slate-200 dark:border-slate-700 flex items-center justify-center text-slate-600 dark:text-slate-300 hover:scale-110 transition-all z-[60]" onclick="document.documentElement.classList.toggle('dark')">
+<i class="material-icons dark:hidden">dark_mode</i>
+<i class="material-icons hidden dark:block">light_mode</i>
+</button>
+
+</body></html>
