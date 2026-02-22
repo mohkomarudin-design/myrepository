@@ -80,25 +80,32 @@ async function createNotification(title, message, type, relatedId) {
             .input('relId', sql.Int, relatedId || null)
             .query(`INSERT INTO Notifications (Title, Message, Type, RelatedID) VALUES (@title, @msg, @type, @relId)`);
 
-        // Dispatch Emall and WA to internal users (Admins)
-        const admins = await p.request().query("SELECT Email, PhoneWA FROM AppUsers WHERE Email IS NOT NULL OR PhoneWA IS NOT NULL");
-        for (let admin of admins.recordset) {
-            // Simulated WhatsApp Send
-            if (admin.PhoneWA) {
-                console.log(`\n💬 [WHATSAPP OUTBOUND] => ${admin.PhoneWA}\nTitle: ${title}\nMsg: ${message}\n`);
-            }
+        // Dispatch Emall and WA to internal users (Admins) asynchronously to avoid blocking the API
+        p.request().query("SELECT Email, PhoneWA FROM AppUsers WHERE Email IS NOT NULL OR PhoneWA IS NOT NULL")
+            .then(async (admins) => {
+                for (let admin of admins.recordset) {
+                    // Simulated WhatsApp Send
+                    if (admin.PhoneWA) {
+                        console.log(`\n💬 [WHATSAPP OUTBOUND] => ${admin.PhoneWA}\nTitle: ${title}\nMsg: ${message}\n`);
+                    }
 
-            // Actual Email Send (via Ethereal mock)
-            if (admin.Email && emailTransporter) {
-                const info = await emailTransporter.sendMail({
-                    from: '"SI-ONE Notifications" <system@sione-ptsi.com>',
-                    to: admin.Email,
-                    subject: `[SI-ONE] ${title}`,
-                    text: `${message}\n\nLihat detail di: http://localhost:3000/app`
-                });
-                console.log(`📧 [EMAIL OUTBOUND] => ${admin.Email}\nPreview URL: ${nodemailer.getTestMessageUrl(info)}\n`);
-            }
-        }
+                    // Actual Email Send (via Ethereal mock)
+                    if (admin.Email && emailTransporter) {
+                        try {
+                            const info = await emailTransporter.sendMail({
+                                from: '"SI-ONE Notifications" <system@sione-ptsi.com>',
+                                to: admin.Email,
+                                subject: `[SI-ONE] ${title}`,
+                                text: `${message}\n\nLihat detail di: http://localhost:3000/app`
+                            });
+                            console.log(`📧 [EMAIL OUTBOUND] => ${admin.Email}\nPreview URL: ${nodemailer.getTestMessageUrl(info)}\n`);
+                        } catch (mailErr) {
+                            console.error('Email send failed:', mailErr);
+                        }
+                    }
+                }
+            })
+            .catch(err => console.error('Failed to get admins for notification:', err));
     } catch (err) {
         console.error('Failed to create notification:', err);
     }
@@ -391,10 +398,17 @@ app.get('/api/requests', async (req, res) => {
                    t.Status, t.PaymentTerms, t.AdditionalNotes, 
                    t.SubTotal, t.AdjustmentAmount, t.TaxAmount, t.GrandTotal,
                    c.CompanyName, c.PICName, c.PICEmail, c.PICPhone,
-                   sc.ServiceName
+                   sc.ServiceName,
+                   nh.ProposedBy AS LastNegotiator
             FROM TransactionHeader t
             LEFT JOIN Customers c ON t.CustomerID = c.CustomerID
             LEFT JOIN ServiceCatalog sc ON t.ServiceID = sc.ServiceID
+            OUTER APPLY (
+                SELECT TOP 1 ProposedBy 
+                FROM NegotiationHistory 
+                WHERE RequestID = t.RequestID 
+                ORDER BY Round DESC, CreatedAt DESC
+            ) nh
         `;
 
         const request = p.request();

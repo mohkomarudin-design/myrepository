@@ -1292,19 +1292,25 @@
 
                         <!-- Tab Content: Divisi -->
                         <div id="content-config-divisi" class="overflow-x-auto hidden">
-                            <!-- ... existing table content ... -->
-                            </tbody>
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr
+                                        class="bg-slate-50 text-slate-500 uppercase text-[11px] font-bold tracking-widest border-y border-slate-200">
+                                        <th class="px-6 py-4">Nama Divisi Bisnis</th>
+                                        <th class="px-6 py-4">Kode Divisi</th>
+                                        <th class="px-6 py-4 text-center">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="divisionsTableBody" class="divide-y divide-slate-200 text-sm">
+                                    <tr>
+                                        <td colspan="3" class="px-6 py-8 text-center text-slate-400 italic">Memuat data
+                                            divisi...</td>
+                                    </tr>
+                                </tbody>
                             </table>
                             <div
                                 class="px-6 py-4 border-t border-slate-200 bg-slate-50/30 flex justify-between items-center text-xs text-slate-500">
-                                <span class="font-medium">Menampilkan 1-3 dari 8 divisi</span>
-                                <div class="flex gap-2">
-                                    <button
-                                        class="px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors disabled:opacity-50"
-                                        disabled="">Previous</button>
-                                    <button
-                                        class="px-3 py-1.5 border border-slate-300 rounded-lg hover:bg-slate-100 transition-colors">Next</button>
-                                </div>
+                                <span id="divisionCountInfo" class="font-medium">Memuat...</span>
                             </div>
                         </div>
 
@@ -1413,32 +1419,8 @@
                         <span class="material-symbols-outlined text-primary text-xl">payments</span>
                         <h4 class="text-sm font-bold text-slate-800">Target RKAP 2026 (Per Cabang/Divisi)</h4>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Divisi Inspeksi</label>
-                            <input id="rt_inspeksi" type="number" placeholder="Contoh: 1000000000"
-                                class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Divisi Konsultasi</label>
-                            <input id="rt_konsultasi" type="number" placeholder="Contoh: 1000000000"
-                                class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Cabang Jakarta</label>
-                            <input id="rt_jakarta" type="number" placeholder="Contoh: 1500000000"
-                                class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Cabang Surabaya</label>
-                            <input id="rt_surabaya" type="number" placeholder="Contoh: 1000000000"
-                                class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400">
-                        </div>
-                        <div class="col-span-2">
-                            <label class="block text-xs font-bold text-slate-500 mb-1">Cabang Balikpapan</label>
-                            <input id="rt_balikpapan" type="number" placeholder="Contoh: 1181818181"
-                                class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400">
-                        </div>
+                    <div id="adminConfigRkapContainer" class="grid grid-cols-2 gap-4">
+                        <!-- Dynamic RKAP inputs will be injected here -->
                     </div>
                 </div>
 
@@ -2978,27 +2960,12 @@
                         class="w-full px-4 py-2.5 border border-slate-300 bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm placeholder:text-slate-400"
                         placeholder="Contoh: Divisi Inspeksi Migas" type="text" required />
                 </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div class="grid grid-cols-1 gap-5">
                     <div>
                         <label class="block text-sm font-semibold text-slate-700 mb-1.5">Kode Divisi</label>
                         <input
                             class="w-full px-4 py-2.5 border border-slate-300 bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all text-sm placeholder:text-slate-400"
                             placeholder="Contoh: DIMG" type="text" required />
-                    </div>
-                    <div>
-                        <label class="block text-sm font-semibold text-slate-700 mb-1.5">Sektor Bisnis</label>
-                        <div class="relative">
-                            <select
-                                class="w-full pl-4 pr-10 py-2.5 border border-slate-300 bg-white rounded-xl focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none appearance-none transition-all text-sm"
-                                required>
-                                <option value="">Pilih Sektor</option>
-                                <option value="energi">Energi</option>
-                                <option value="manufaktur">Manufaktur</option>
-                                <option value="lingkungan">Lingkungan</option>
-                            </select>
-                            <span
-                                class="material-symbols-outlined absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
-                        </div>
                     </div>
                 </div>
                 <div class="pt-2">
@@ -3151,15 +3118,26 @@
                     const stMap = {
                         'New Request': { color: 'orange', label: 'Review Admin' },
                         'Reviewing': { color: 'blue', label: 'Reviewing' },
-                        'Negotiation': { color: 'amber', label: 'Negosiasi' },
                         'Deal': { color: 'emerald', label: 'Deal / PO' },
                         'Rejected': { color: 'rose', label: 'Rejected' },
                         'Uncompleted Data': { color: 'rose', label: 'Data Tidak Lengkap' }
                     };
-                    const st = stMap[r.Status] || stMap['New Request'];
+                    let st = stMap[r.Status] || stMap['New Request'];
+
+                    // Dynamic Negotiation Labels (Public UI)
+                    if (r.Status === 'Negotiation') {
+                        if (r.LastNegotiator === 'Admin') {
+                            st = { color: 'amber', label: 'Respon PTSI' };
+                        } else if (r.LastNegotiator === 'Client') {
+                            st = { color: 'slate', label: 'Menunggu Respon PTSI' };
+                        } else {
+                            st = { color: 'amber', label: 'Negosiasi' };
+                        }
+                    }
 
                     let actionBtn = `<button onclick="openPublicChatModal(${r.RequestID}, '${r.TicketNumber}')" class="p-1.5 rounded-lg text-primary bg-blue-50 hover:bg-primary hover:text-white transition-all flex items-center" title="Chat"><span class="material-symbols-outlined text-[18px]">chat_bubble</span></button>`;
-                    if (r.Status === 'Negotiation' || r.Status === 'Reviewing') {
+
+                    if (r.Status === 'Reviewing' || (r.Status === 'Negotiation' && r.LastNegotiator !== 'Client')) {
                         actionBtn = `<button onclick="openPublicRespondModal(${r.RequestID}, '${(r.TicketNumber || '').replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-amber-600 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-all flex items-center gap-1" title="Respond"><span class="material-symbols-outlined text-[16px]">reply</span> Respond</button>`;
                     } else if (r.Status === 'Uncompleted Data') {
                         actionBtn = `<button onclick="openCompleteDataModal(${r.RequestID}, '${(r.TicketNumber || '').replace(/'/g, "\\'")}')" class="px-3 py-1.5 rounded-lg text-xs font-bold text-rose-600 bg-rose-50 hover:bg-rose-100 border border-rose-200 transition-all flex items-center gap-1" title="Lengkapi Data"><span class="material-symbols-outlined text-[16px]">edit_document</span> Lengkapi Data</button>`;
@@ -3259,8 +3237,22 @@
                     const initials = (r.CompanyName || r.GuestName || 'XX').split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
                     const colors = ['blue', 'purple', 'orange', 'emerald', 'cyan', 'rose'];
                     const clr = colors[r.RequestID % colors.length];
-                    const stMap = { 'New Request': 'amber', 'Reviewing': 'slate', 'Negotiation': 'amber', 'Deal': 'emerald', 'Rejected': 'rose', 'Request Data': 'blue' };
-                    const stClr = stMap[r.Status] || 'amber';
+                    const stMap = { 'New Request': 'amber', 'Reviewing': 'slate', 'Deal': 'emerald', 'Rejected': 'rose', 'Request Data': 'blue' };
+                    let stClr = stMap[r.Status] || 'amber';
+                    let displayStatus = r.Status;
+
+                    if (r.Status === 'Negotiation') {
+                        if (r.LastNegotiator === 'Client') {
+                            stClr = 'orange'; // strong color for action required
+                            displayStatus = 'Nego Klien Masuk';
+                        } else if (r.LastNegotiator === 'Admin') {
+                            stClr = 'slate'; // dimmed for waiting
+                            displayStatus = 'Nego Terkirim';
+                        } else {
+                            stClr = 'amber';
+                            displayStatus = 'Negosiasi';
+                        }
+                    }
 
                     const ticket = r.TicketNumber || 'REQ-' + r.RequestID;
                     tbody.innerHTML += `<tr class="hover:bg-slate-50 transition-colors">
@@ -3269,7 +3261,7 @@
                             <div><div class="font-bold text-slate-800">${r.CompanyName || r.GuestName || '-'}</div>
                             <div class="text-[10px] text-slate-400">ID: ${ticket}</div></div></div></td>
                         <td class="px-6 py-4 text-slate-600">${r.ServiceName || '-'}</td>
-                        <td class="px-6 py-4 text-center"><span id="badge-REQ-${r.RequestID}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-${stClr}-50 text-${stClr}-600 border border-${stClr}-100 uppercase tracking-wide">${r.Status}</span></td>
+                        <td class="px-6 py-4 text-center"><span id="badge-REQ-${r.RequestID}" class="px-2.5 py-1 rounded-full text-[10px] font-bold bg-${stClr}-50 text-${stClr}-600 border border-${stClr}-100 uppercase tracking-wide whitespace-nowrap">${displayStatus}</span></td>
                         <td class="px-6 py-4 text-center"><div class="flex items-center justify-center gap-1.5">
                             <button onclick="openNewRequestModal(${r.RequestID})" class="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100 hover:text-primary transition-all" title="Detail"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
                             <button onclick="negotiateRequestById(${r.RequestID})" class="p-1.5 rounded-lg text-amber-500 hover:bg-amber-50 hover:text-amber-700 transition-all" title="Negosiasi"><span class="material-symbols-outlined text-[20px]">handshake</span></button>
@@ -3886,16 +3878,54 @@
                         document.getElementById('adminConfigProfileImg').classList.remove('hidden');
                         document.getElementById('adminConfigProfileIcon').classList.add('hidden');
                     }
-                    const savedTargetsRaw = localStorage.getItem('sione_rkap_targets');
-                    if (savedTargetsRaw) {
-                        try {
-                            const tObj = JSON.parse(savedTargetsRaw);
-                            if (document.getElementById('rt_inspeksi')) document.getElementById('rt_inspeksi').value = tObj.inspeksi || '';
-                            if (document.getElementById('rt_konsultasi')) document.getElementById('rt_konsultasi').value = tObj.konsultasi || '';
-                            if (document.getElementById('rt_jakarta')) document.getElementById('rt_jakarta').value = tObj.jakarta || '';
-                            if (document.getElementById('rt_surabaya')) document.getElementById('rt_surabaya').value = tObj.surabaya || '';
-                            if (document.getElementById('rt_balikpapan')) document.getElementById('rt_balikpapan').value = tObj.balikpapan || '';
-                        } catch (e) { }
+                }
+
+                // Dynamically populate RKAP Target Inputs based on configured Cabang and Divisi
+                const rkapContainer = document.getElementById('adminConfigRkapContainer');
+                if (rkapContainer) {
+                    rkapContainer.innerHTML = ''; // clear
+
+                    // Collect names directly from the configuration tables
+                    const divisions = Array.from(document.querySelectorAll('#content-config-divisi tbody tr')).map(tr => {
+                        const td = tr.querySelector('td:nth-child(1)'); // Fixed: Name is in the first column for Divisions
+                        return td && !td.hasAttribute('colspan') ? td.textContent.trim() : null;
+                    }).filter(Boolean);
+
+                    const branches = Array.from(document.querySelectorAll('#branchesTableBody tr')).map(tr => {
+                        const td = tr.querySelector('td:nth-child(1)'); // Fixed: Name is in the first column for Branches
+                        // Clean up the 'Active' tag if it exists in the text content
+                        return td && !td.hasAttribute('colspan') ? td.textContent.replace('Active', '').trim() : null;
+                    }).filter(Boolean);
+
+                    // If tables are empty/not rendered yet, provide a fallback/message
+                    const allItems = [...divisions, ...branches];
+                    if (allItems.length === 0) {
+                        rkapContainer.innerHTML = '<p class="col-span-2 text-xs text-slate-400 italic">Belum ada Cabang atau Divisi yang dikonfigurasi.</p>';
+                    } else {
+                        // Load saved targets
+                        let tObj = {};
+                        const savedTargetsRaw = localStorage.getItem('sione_rkap_targets');
+                        if (savedTargetsRaw) {
+                            try { tObj = JSON.parse(savedTargetsRaw); } catch (e) { }
+                        }
+
+                        allItems.forEach((itemName, index) => {
+                            // Give full width to the last item if odd total
+                            const isLastOdd = (allItems.length % 2 !== 0 && index === allItems.length - 1);
+                            const colSpanClass = isLastOdd ? 'col-span-2' : '';
+
+                            // Create safe key
+                            const safeKey = itemName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+                            const val = tObj[safeKey] !== undefined ? tObj[safeKey] : '';
+
+                            rkapContainer.innerHTML += `
+                                <div class="${colSpanClass}">
+                                    <label class="block text-xs font-bold text-slate-500 mb-1">${itemName}</label>
+                                    <input data-rkap-key="${safeKey}" type="number" placeholder="Contoh: 1000000000" value="${val}"
+                                        class="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg text-sm font-medium text-slate-800 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all placeholder:text-slate-400">
+                                </div>
+                            `;
+                        });
                     }
                 }
                 modal.classList.remove('hidden');
@@ -3916,13 +3946,15 @@
             // we simulate saving
             alert('Pengaturan Admin berhasil disimpan!');
 
-            const inspeksi = Number(document.getElementById('rt_inspeksi')?.value) || 0;
-            const konsultasi = Number(document.getElementById('rt_konsultasi')?.value) || 0;
-            const jakarta = Number(document.getElementById('rt_jakarta')?.value) || 0;
-            const surabaya = Number(document.getElementById('rt_surabaya')?.value) || 0;
-            const balikpapan = Number(document.getElementById('rt_balikpapan')?.value) || 0;
+            const targetsObj = {};
+            const rkapInputs = document.querySelectorAll('#adminConfigRkapContainer input[data-rkap-key]');
+            rkapInputs.forEach(input => {
+                const key = input.getAttribute('data-rkap-key');
+                if (key) {
+                    targetsObj[key] = Number(input.value) || 0;
+                }
+            });
 
-            const targetsObj = { inspeksi, konsultasi, jakarta, surabaya, balikpapan };
             localStorage.setItem('sione_rkap_targets', JSON.stringify(targetsObj));
             calculateAndRenderRKAP(); // Update dashboard immediately
 
@@ -4067,7 +4099,8 @@
                 const saved = localStorage.getItem('sione_rkap_targets');
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    const sum = (parsed.inspeksi || 0) + (parsed.konsultasi || 0) + (parsed.jakarta || 0) + (parsed.surabaya || 0) + (parsed.balikpapan || 0);
+                    // Dynamically sum all target values regardless of their key names
+                    const sum = Object.values(parsed).reduce((acc, val) => acc + (Number(val) || 0), 0);
                     if (sum > 0) totalTarget = sum;
                 }
             } catch (e) { }
@@ -4202,7 +4235,7 @@
                                 <div class="flex items-center gap-2">
                                     <input type="text" data-param-id="${p.ParamID}" data-param-name="${p.ParameterName}" data-unit-price="0"
                                         class="param-text-input flex-1 px-3 py-2 bg-white border border-emerald-200 rounded-lg focus:ring-2 focus:ring-emerald-300/30 focus:border-emerald-400 transition-all outline-none text-sm"
-                                        placeholder="Keterangan (misal: Lokasi...)" />
+                                        placeholder="Masukkan ${p.ParameterName}..." />
                                 </div>
                             </div>`;
                     }
@@ -4516,7 +4549,9 @@
 
         function openAddDivisiModal() {
             const modal = document.getElementById('addDivisiModal');
-            if (modal) modal.classList.remove('hidden');
+            if (modal) {
+                modal.classList.remove('hidden');
+            }
         }
 
         function closeAddDivisiModal() {
@@ -4866,25 +4901,11 @@
         }
 
         // --- NEGOTIATE REQUEST ---
-        async function negotiateRequestById(id) {
-            if (!confirm('Ubah status menjadi Negotiation?')) return;
-            try {
-                await api('/requests/' + id, 'PUT', { Status: 'Negotiation' });
-                loadAdminRequests();
-                updateNewRequestBadge();
-            } catch (e) { alert('Error: ' + e.message); }
-        }
 
         async function negotiateRequest() {
             if (!currentNewRequestID) return alert('Belum ada request yang dipilih.');
-            if (!confirm('Ubah status menjadi Negotiation?')) return;
-            try {
-                await api('/requests/' + currentNewRequestID, 'PUT', { Status: 'Negotiation' });
-                alert('Status diubah menjadi Negotiation.');
-                closeNewRequestModal();
-                loadAdminRequests();
-                updateNewRequestBadge();
-            } catch (e) { alert('Error: ' + e.message); }
+            closeNewRequestModal();
+            negotiateRequestById(currentNewRequestID);
         }
 
         function calculateGrandTotal() {
