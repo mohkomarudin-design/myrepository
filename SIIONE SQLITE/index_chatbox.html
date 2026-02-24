@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>SI-ONE Integrated Assurance Chat</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#136dec",
+                        "background-light": "#f6f7f8",
+                        "background-dark": "#101822",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.3s ease-out forwards',
+                        'bounce-delay': 'bounce 1.4s infinite ease-in-out both'
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        }
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: max(884px, 100dvh);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        /* Styling khusus agar scrollbar fleksibel lebih rapi */
+        #chat-window::-webkit-resizer {
+            background-color: transparent;
+        }
+
+        .chat-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-scroll::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .chat-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 20px;
+        }
+
+        .dark .chat-scroll::-webkit-scrollbar-thumb {
+            background-color: #475569;
+        }
+
+        /* Class khusus saat dragging agar tidak lag */
+        .is-dragging {
+            transition: none !important;
+            opacity: 0.95;
+            user-select: none;
+        }
+
+        /* Custom formatting untuk AI Response (Markdown dasar) */
+        .ai-response-content p {
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-response-content p:last-child {
+            margin-bottom: 0;
+        }
+
+        .ai-response-content strong {
+            font-weight: 700;
+            color: inherit;
+        }
+
+        .ai-response-content ul {
+            list-style-type: disc;
+            padding-left: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .ai-response-content ol {
+            list-style-type: decimal;
+            padding-left: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-background-light dark:bg-background-dark min-h-screen flex items-end justify-end p-4 sm:p-6 overflow-hidden">
+
+    <!-- Floating Action Button (Icon) - Default ditampilkan -->
+    <button id="chat-fab"
+        class="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-16 h-16 bg-primary text-white rounded-full shadow-2xl flex items-center justify-center hover:bg-primary/90 transition-transform transform hover:scale-105 z-50">
+        <span class="material-symbols-outlined text-3xl">chat</span>
+        <span class="absolute top-0 right-0 flex h-4 w-4">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+            <span
+                class="relative inline-flex rounded-full h-4 w-4 bg-red-500 border-2 border-white dark:border-slate-900"></span>
+        </span>
+    </button>
+
+    <!-- Chat Container - Default disembunyikan dengan class 'hidden' -->
+    <div id="chat-window" style="resize: both; min-width: 320px; min-height: 400px;"
+        class="hidden fixed bottom-4 right-4 sm:bottom-6 sm:right-6 w-[380px] max-w-[calc(100vw-2rem)] bg-white dark:bg-slate-900 shadow-2xl rounded-2xl flex flex-col h-[650px] max-h-[90vh] overflow-hidden border border-slate-200 dark:border-slate-800 z-50 transition-all duration-300 ease-in-out">
+
+        <!-- Header Section -->
+        <header class="bg-primary p-4 text-white flex flex-col gap-1 flex-shrink-0 cursor-move" id="chat-header"
+            title="Tahan dan geser untuk memindahkan">
+            <div class="flex items-center justify-between pointer-events-none">
+                <div class="flex items-center gap-3">
+                    <div class="bg-white/20 p-1.5 rounded-lg">
+                        <span class="material-symbols-outlined text-white text-2xl">shield_with_heart</span>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-bold leading-tight tracking-tight text-white">SI-ONE</h1>
+                        <p class="text-[10px] uppercase tracking-widest opacity-80 font-semibold text-white">AI
+                            Integrated Assurance</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-1 pointer-events-auto">
+                    <button id="btn-new-chat" class="p-2 hover:bg-white/20 rounded-full transition-colors text-white"
+                        title="Mulai Percakapan Baru">
+                        <span class="material-symbols-outlined">refresh</span>
+                    </button>
+                    <button id="btn-minimize" class="p-2 hover:bg-white/20 rounded-full transition-colors text-white"
+                        title="Minimize">
+                        <span class="material-symbols-outlined">remove</span>
+                    </button>
+                    <button id="btn-close" class="p-2 hover:bg-white/20 rounded-full transition-colors text-white"
+                        title="Close & Reset">
+                        <span class="material-symbols-outlined">close</span>
+                    </button>
+                </div>
+            </div>
+            <div class="flex items-center gap-2 mt-2 px-1 pointer-events-none">
+                <div class="relative flex h-2 w-2">
+                    <span
+                        class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </div>
+                <span class="text-xs font-medium text-white/90">AI Agent Online</span>
+            </div>
+        </header>
+
+        <!-- Message Area -->
+        <main id="chat-messages"
+            class="chat-scroll flex-1 overflow-y-auto p-4 space-y-5 bg-slate-50 dark:bg-slate-900/50">
+            <!-- Pesan akan dimuat via JS -->
+        </main>
+
+        <!-- Input Area -->
+        <footer
+            class="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex-shrink-0 relative">
+
+            <!-- Image/Attachment preview -->
+            <div id="attachment-preview"
+                class="hidden mb-2 px-3 py-2 bg-slate-100 dark:bg-slate-800 rounded-lg flex justify-between items-center text-xs text-slate-600 dark:text-slate-300">
+                <div class="flex items-center gap-2 truncate">
+                    <img id="image-thumb" class="h-6 w-6 object-cover rounded hidden" src="" alt="preview" />
+                    <span class="material-symbols-outlined text-sm" id="file-icon">image</span>
+                    <span id="file-name" class="truncate font-medium">image.jpg</span>
+                </div>
+                <button id="btn-remove-file" class="text-red-500 hover:text-red-700 ml-2">
+                    <span class="material-symbols-outlined text-sm">close</span>
+                </button>
+            </div>
+
+            <!-- Emoji Picker Popover -->
+            <div id="emoji-picker"
+                class="hidden absolute bottom-[85px] right-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 shadow-xl rounded-xl p-2 w-[280px] z-10">
+                <div class="text-[11px] font-bold text-slate-400 mb-2 px-1">Pilih Emoji</div>
+                <div id="emoji-grid" class="grid grid-cols-7 gap-1 max-h-48 overflow-y-auto chat-scroll p-1">
+                    <!-- Emojis dimuat via JS -->
+                </div>
+            </div>
+
+            <div
+                class="flex items-center gap-2 bg-slate-100 dark:bg-slate-800 rounded-lg p-1.5 focus-within:ring-2 focus-within:ring-primary/20 transition-all">
+                <!-- Accept images for AI processing -->
+                <input type="file" id="file-input" class="hidden" accept="image/*" />
+
+                <button id="btn-attach"
+                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors"
+                    title="Unggah Gambar">
+                    <span class="material-symbols-outlined">image</span>
+                </button>
+
+                <button id="btn-emoji-toggle"
+                    class="p-2 text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors"
+                    title="Tambahkan Emoji">
+                    <span class="material-symbols-outlined">sentiment_satisfied</span>
+                </button>
+
+                <input id="chat-input"
+                    class="flex-1 bg-transparent border-none focus:ring-0 text-sm text-slate-800 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 py-2 outline-none"
+                    placeholder="Tanya sesuatu atau unggah gambar..." type="text" />
+
+                <button id="btn-send"
+                    class="bg-primary text-white p-2 rounded-lg hover:bg-primary/90 transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
+                    title="Kirim">
+                    <span class="material-symbols-outlined text-[20px]">send</span>
+                </button>
+            </div>
+            <div class="mt-2 text-center pb-1">
+                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Secured by Gemini AI & SI-ONE</p>
+            </div>
+
+            <!-- Handle resize indicator -->
+            <div
+                class="absolute bottom-0 right-0 w-4 h-4 cursor-se-resize flex items-end justify-end p-0.5 opacity-40 pointer-events-none">
+                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"
+                    class="text-slate-500">
+                    <path d="M9 1L1 9M9 5L5 9M9 9H9.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                </svg>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // ======================================================================
+        // ⚙️ KONFIGURASI AI GEMINI (UBAH BRIEFING/PROMPT ANDA DI SINI)
+        // ======================================================================
+        // Anda bisa merancang persona AI di Google AI Studio atau ChatGPT,
+        // lalu copy-paste teks briefing-nya ke dalam tanda kutip (`) di bawah ini.
+        // Teks ini akan menjadi "Otak" utama dari chatbot SI-ONE.
+
+        const AI_SYSTEM_PROMPT = `
+Anda adalah Virtual Customer Relationship Officer (VCRO) resmi untuk platform SI-ONE (Integrated Assurance) milik PT Surveyor Indonesia. Anda bertugas melayani pengunjung di website pengembangan SIONE dengan gaya profesional, solutif, dan korporat.
+
+Basis Pengetahuan (Proyek SIONE):
+- Identitas Platform: SI-ONE adalah platform terintegrasi untuk Monitoring & Pricing (versi 2.0). Berfokus pada layanan Inspeksi, Pengujian, dan Sertifikasi (Assurance).
+- Layanan Utama: Inspeksi Teknik (Contoh: Migas, Fasilitas Umum), Pengujian Laboratorium (Contoh: Material, NDT Radiography), Sertifikasi (Contoh: Sertifikasi Laik Operasi/SLO, ISO 45001, SMK3, Penyalur Petir), Konsultansi Teknik & Pelatihan.
+- Fitur Pengguna (Public):
+  * Monitoring: Melacak status tiket pengajuan (Review Admin, Negotiation, Deal/PO).
+  * Buat Penawaran: Form pengajuan proyek baru dengan detail data perusahaan, lokasi proyek, dan spesifikasi alat (seperti Kurn R-150 atau Pesawat Uap).
+  * Custom Service: Jika layanan tidak tersedia di daftar standar, pengguna bisa mengajukan kustomisasi.
+- Alur Kerja: Pengguna mengisi form -> Admin meninjau (Reviewing) -> Negosiasi Harga (Negotiation) -> Kesepakatan (Deal/PO) -> Pelaksanaan & Monitoring Progres (Termin/BAST).
+
+Panduan Komunikasi:
+- Gaya Bahasa: Formal namun ramah (Profesional Korporat).
+- Tujuan Utama: Membantu pengguna memahami fitur website, memberikan informasi layanan, dan memandu langkah pengajuan penawaran atau pengecekan status proyek.
+- Pembatasan: Jika ditanya teknis harga yang sangat detail atau data rahasia admin, arahkan pengguna untuk menunggu respon di menu "Monitoring" atau hubungi tim sales resmi melalui chat support di dashboard.
+- Referensi Perusahaan: Informasi lebih lanjut tentang profil perusahaan tersedia di https://www.ptsi.co.id/.
+        `;
+
+        // Masukkan API Key Anda di sini
+        const apiKey = "AIzaSyBTbwOyZ1bZ3Obq7V_eksJo9Kn5zrnLIEY";
+        // ======================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            let chatHistory = []; // Menyimpan konteks obrolan
+            let isGenerating = false;
+
+            // === DOM Elements ===
+            const chatWindow = document.getElementById('chat-window');
+            const chatHeader = document.getElementById('chat-header');
+            const chatFab = document.getElementById('chat-fab');
+            const btnNewChat = document.getElementById('btn-new-chat');
+            const btnMinimize = document.getElementById('btn-minimize');
+            const btnClose = document.getElementById('btn-close');
+            const chatMessages = document.getElementById('chat-messages');
+            const chatInput = document.getElementById('chat-input');
+            const btnSend = document.getElementById('btn-send');
+
+            const btnEmojiToggle = document.getElementById('btn-emoji-toggle');
+            const emojiPicker = document.getElementById('emoji-picker');
+            const emojiGrid = document.getElementById('emoji-grid');
+
+            const btnAttach = document.getElementById('btn-attach');
+            const fileInput = document.getElementById('file-input');
+            const attachmentPreview = document.getElementById('attachment-preview');
+            const fileNameDisplay = document.getElementById('file-name');
+            const btnRemoveFile = document.getElementById('btn-remove-file');
+            const imageThumb = document.getElementById('image-thumb');
+            const fileIcon = document.getElementById('file-icon');
+
+            let selectedFile = null;
+            let objectUrl = null;
+
+            const adminAvatar = "https://lh3.googleusercontent.com/aida-public/AB6AXuAIcTYw1ARPtfkPtgTuAn6xq1IxdS0PctaYwH_ESD-y9UL6EXNdNfb2TSJvNVqiLaebSmFPOxxayZzsc_a6vdzU8ZFhRuroapqZ6NuTQwQRioq6eifbGPscd6oWxJfKU_6wTy0KbglIHCCd7_XOMTa91NTyhbTApPh_QU5gQ09etYNjruYs-HZmDMZaACQwiaZSy4QMD9ZNuTaF-pElWoDnoq7Vgz7TMz86E_8Cx96ZOgKC6GDrxfs2x38TUk4ATlkOFWSbdkCkaw";
+
+            // === AWAL PERCAKAPAN ===
+            function initChat() {
+                chatHistory = []; // Reset memori AI
+                chatMessages.innerHTML = `
+                    <div class="flex justify-center mb-4">
+                        <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider bg-white dark:bg-slate-800 px-3 py-1 rounded-full shadow-sm border border-slate-100 dark:border-slate-700">Hari ini</span>
+                    </div>
+                `;
+                // Menambahkan sapaan sesuai pedoman VCRO PT Surveyor Indonesia
+                appendAdminMessage("Selamat datang di Layanan Publik SI-ONE PT Surveyor Indonesia. Saya SI-ONE, VCRO Anda. Ada yang bisa saya bantu terkait layanan inspeksi atau pengajuan penawaran Anda?");
+                scrollToBottom();
+            }
+
+            // === UTILITAS ===
+            function scrollToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+
+            function getCurrentTime() {
+                return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            // Basic Markdown Parser untuk respons Gemini
+            function parseMarkdown(text) {
+                let html = text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                    .replace(/```([\s\S]*?)```/g, '<pre class="bg-slate-800 text-slate-100 p-2 rounded text-xs overflow-x-auto mt-1 mb-1"><code>$1</code></pre>')
+                    .replace(/`(.*?)`/g, '<code class="bg-slate-200 dark:bg-slate-700 px-1 rounded text-[12px]">$1</code>');
+
+                // Pisahkan paragraf
+                return html.split('\n\n').map(p => `<p>${p.replace(/\n/g, '<br/>')}</p>`).join('');
+            }
+
+            // Konversi File ke Base64 (Syarat untuk API Gemini)
+            function fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.readAsDataURL(file);
+                    reader.onload = () => resolve(reader.result.split(',')[1]);
+                    reader.onerror = error => reject(error);
+                });
+            }
+
+            // Fetch dengan Exponential Backoff (Mencegah error jaringan/limit)
+            async function fetchWithBackoff(url, options, retries = 3) {
+                const delays = [1000, 3000, 6000];
+                for (let i = 0; i < retries; i++) {
+                    try {
+                        const response = await fetch(url, options);
+                        if (!response.ok) {
+                            const errorBody = await response.text();
+                            console.error(`API Error ${response.status}:`, errorBody);
+                            throw new Error(`HTTP Error: ${response.status} - ${errorBody}`);
+                        }
+                        return await response.json();
+                    } catch (error) {
+                        console.warn(`Attempt ${i + 1}/${retries} failed:`, error.message);
+                        if (i === retries - 1) throw error;
+                        await new Promise(res => setTimeout(res, delays[i]));
+                    }
+                }
+            }
+
+            // === FUNGSI UI RENDER PESAN ===
+            function appendUserMessage(text, imgUrl = null) {
+                let mediaHTML = '';
+                if (imgUrl) {
+                    mediaHTML = `<img src="${imgUrl}" class="max-w-full h-auto max-h-[200px] rounded-lg mb-2 border border-white/20 object-contain bg-black/10" alt="Uploaded Image"/>`;
+                }
+
+                const msgHTML = `
+                    <div class="flex items-start flex-row-reverse gap-3 animate-fade-in mb-4">
+                        <div class="w-8 h-8 rounded-full bg-primary/20 flex-shrink-0 flex items-center justify-center border border-primary/30">
+                            <span class="material-symbols-outlined text-primary text-sm">person</span>
+                        </div>
+                        <div class="flex flex-col gap-1.5 max-w-[85%] items-end">
+                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 mr-1">Anda</span>
+                            <div class="bg-primary text-white p-3 rounded-tl-xl rounded-bl-xl rounded-br-xl shadow-md text-sm leading-relaxed break-words w-full">
+                                ${mediaHTML}
+                                ${text ? `<span>${text}</span>` : ''}
+                            </div>
+                            <div class="flex items-center gap-1 mr-1">
+                                <span class="text-[10px] text-slate-400 dark:text-slate-500">${getCurrentTime()}</span>
+                                <span class="material-symbols-outlined text-primary text-[14px]">done_all</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chatMessages.insertAdjacentHTML('beforeend', msgHTML);
+                scrollToBottom();
+            }
+
+            function appendAdminMessage(text) {
+                const msgHTML = `
+                    <div class="flex items-start gap-3 animate-fade-in mb-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex-shrink-0 border border-slate-300 dark:border-slate-600 overflow-hidden">
+                            <img class="w-full h-full object-cover" alt="Admin" src="${adminAvatar}"/>
+                        </div>
+                        <div class="flex flex-col gap-1.5 max-w-[85%]">
+                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 ml-1">AI SI-ONE</span>
+                            <div class="bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-100 p-3 rounded-tr-xl rounded-br-xl rounded-bl-xl shadow-sm border border-slate-200 dark:border-slate-700 text-sm leading-relaxed ai-response-content overflow-hidden break-words">
+                                ${parseMarkdown(text)}
+                            </div>
+                            <span class="text-[10px] text-slate-400 dark:text-slate-500 ml-1">${getCurrentTime()}</span>
+                        </div>
+                    </div>
+                `;
+                chatMessages.insertAdjacentHTML('beforeend', msgHTML);
+                scrollToBottom();
+            }
+
+            function showLoadingIndicator() {
+                const loadingHTML = `
+                    <div id="ai-loading" class="flex items-start gap-3 animate-fade-in mb-4">
+                        <div class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex-shrink-0 border border-slate-300 dark:border-slate-600 overflow-hidden">
+                            <img class="w-full h-full object-cover" alt="Admin" src="${adminAvatar}"/>
+                        </div>
+                        <div class="flex flex-col gap-1.5">
+                            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 ml-1">AI SI-ONE sedang mengetik...</span>
+                            <div class="bg-white dark:bg-slate-800 p-3 rounded-tr-xl rounded-br-xl rounded-bl-xl shadow-sm border border-slate-200 dark:border-slate-700 flex items-center gap-1.5 h-[42px] w-[60px] justify-center">
+                                <div class="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce-delay" style="animation-delay: 0s"></div>
+                                <div class="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce-delay" style="animation-delay: 0.2s"></div>
+                                <div class="w-1.5 h-1.5 bg-slate-400 dark:bg-slate-500 rounded-full animate-bounce-delay" style="animation-delay: 0.4s"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                chatMessages.insertAdjacentHTML('beforeend', loadingHTML);
+                scrollToBottom();
+            }
+
+            function hideLoadingIndicator() {
+                const loadingElement = document.getElementById('ai-loading');
+                if (loadingElement) loadingElement.remove();
+            }
+
+            // === FUNGSI UTAMA AI GEMINI ===
+            async function generateAIResponse(text, file) {
+                isGenerating = true;
+                btnSend.disabled = true;
+                chatInput.disabled = true;
+
+                showLoadingIndicator();
+
+                try {
+                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`;
+
+                    // Siapkan "Parts" untuk input pengguna
+                    let userParts = [];
+                    if (text) userParts.push({ text: text });
+
+                    // Jika ada gambar, konversi dan tambahkan ke parts
+                    if (file && file.type.startsWith('image/')) {
+                        const base64Data = await fileToBase64(file);
+                        userParts.push({
+                            inlineData: {
+                                mimeType: file.type,
+                                data: base64Data
+                            }
+                        });
+                        if (!text) userParts.push({ text: "Tolong jelaskan gambar ini secara detail." });
+                    }
+
+                    // Tambahkan ke History Obrolan
+                    chatHistory.push({ role: "user", parts: userParts });
+
+                    // Payload API
+                    const payload = {
+                        contents: chatHistory,
+                        systemInstruction: {
+                            parts: [{ text: AI_SYSTEM_PROMPT }] // <--- Menggunakan variabel dari atas
+                        }
+                    };
+
+                    const options = {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(payload)
+                    };
+
+                    const result = await fetchWithBackoff(url, options);
+
+                    let aiText = "Maaf, saya tidak dapat merespons saat ini. Coba lagi nanti.";
+                    if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts) {
+                        aiText = result.candidates[0].content.parts[0].text;
+                    }
+
+                    // Simpan respons AI ke memori histori
+                    chatHistory.push({ role: "model", parts: [{ text: aiText }] });
+
+                    hideLoadingIndicator();
+                    appendAdminMessage(aiText);
+
+                } catch (error) {
+                    console.error("AI Generation Error:", error);
+                    hideLoadingIndicator();
+                    appendAdminMessage("⚠️ Terjadi kesalahan pada server AI. Silakan periksa koneksi atau coba beberapa saat lagi.");
+                    // Rollback history jika gagal
+                    chatHistory.pop();
+                } finally {
+                    isGenerating = false;
+                    btnSend.disabled = false;
+                    chatInput.disabled = false;
+                    chatInput.focus();
+                }
+            }
+
+
+            // === EVENT LISTENERS (UI Interactions) ===
+
+            // File Attachment
+            btnAttach.addEventListener('click', () => {
+                fileInput.click();
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                if (e.target.files.length > 0) {
+                    selectedFile = e.target.files[0];
+                    fileNameDisplay.textContent = selectedFile.name;
+
+                    // Image Preview
+                    if (selectedFile.type.startsWith('image/')) {
+                        if (objectUrl) URL.revokeObjectURL(objectUrl);
+                        objectUrl = URL.createObjectURL(selectedFile);
+                        imageThumb.src = objectUrl;
+                        imageThumb.classList.remove('hidden');
+                        fileIcon.classList.add('hidden');
+                    } else {
+                        imageThumb.classList.add('hidden');
+                        fileIcon.classList.remove('hidden');
+                    }
+
+                    attachmentPreview.classList.remove('hidden');
+                    chatInput.focus();
+                }
+            });
+
+            btnRemoveFile.addEventListener('click', removeFile);
+
+            function removeFile() {
+                selectedFile = null;
+                fileInput.value = '';
+                attachmentPreview.classList.add('hidden');
+                imageThumb.classList.add('hidden');
+                if (objectUrl) {
+                    URL.revokeObjectURL(objectUrl);
+                    objectUrl = null;
+                }
+            }
+
+            // Send Logic
+            async function handleSendMessage() {
+                if (isGenerating) return;
+
+                const text = chatInput.value.trim();
+                const fileToSend = selectedFile;
+                const urlToSend = objectUrl; // Keep ref to show in UI
+
+                if (text === '' && !fileToSend) return;
+
+                // 1. Tampilkan ke UI
+                appendUserMessage(text, fileToSend && fileToSend.type.startsWith('image/') ? urlToSend : null);
+
+                // 2. Bersihkan input
+                chatInput.value = '';
+                removeFile();
+                emojiPicker.classList.add('hidden');
+
+                // 3. Panggil AI
+                await generateAIResponse(text, fileToSend);
+            }
+
+            btnSend.addEventListener('click', handleSendMessage);
+            chatInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') handleSendMessage();
+            });
+
+            // === DRAG & DROP LOGIC ===
+            let isDragging = false;
+            let dragOffsetX = 0;
+            let dragOffsetY = 0;
+
+            chatHeader.addEventListener('mousedown', (e) => {
+                if (e.target.closest('button')) return;
+                isDragging = true;
+                chatWindow.classList.add('is-dragging');
+
+                const rect = chatWindow.getBoundingClientRect();
+                if (!chatWindow.style.top || chatWindow.style.top === '') {
+                    chatWindow.style.left = rect.left + 'px';
+                    chatWindow.style.top = rect.top + 'px';
+                    chatWindow.style.bottom = 'auto';
+                    chatWindow.style.right = 'auto';
+                    chatWindow.classList.remove('bottom-4', 'right-4', 'sm:bottom-6', 'sm:right-6');
+                }
+
+                dragOffsetX = e.clientX - rect.left;
+                dragOffsetY = e.clientY - rect.top;
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                let newX = e.clientX - dragOffsetX;
+                let newY = e.clientY - dragOffsetY;
+
+                const maxX = window.innerWidth - chatWindow.offsetWidth;
+                const maxY = window.innerHeight - chatWindow.offsetHeight;
+
+                newX = Math.max(0, Math.min(newX, maxX));
+                newY = Math.max(0, Math.min(newY, maxY));
+
+                chatWindow.style.left = newX + 'px';
+                chatWindow.style.top = newY + 'px';
+            });
+
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    chatWindow.classList.remove('is-dragging');
+                }
+            });
+
+            // === WINDOW ACTIONS ===
+            btnNewChat.addEventListener('click', () => {
+                // Konfirmasi opsional jika ingin mencegah ketidaksengajaan (bisa dihapus jika tidak perlu)
+                // if(!confirm('Mulai percakapan baru? Riwayat saat ini akan dihapus.')) return;
+
+                initChat();
+                removeFile();
+                chatInput.value = '';
+                emojiPicker.classList.add('hidden');
+            });
+
+            btnMinimize.addEventListener('click', () => {
+                chatWindow.classList.add('hidden');
+                chatFab.classList.remove('hidden');
+            });
+
+            btnClose.addEventListener('click', () => {
+                chatWindow.classList.add('hidden');
+                chatFab.classList.remove('hidden');
+
+                setTimeout(() => {
+                    initChat();
+                    removeFile();
+                    chatInput.value = '';
+                    emojiPicker.classList.add('hidden');
+
+                    chatWindow.style.top = '';
+                    chatWindow.style.left = '';
+                    chatWindow.style.bottom = '';
+                    chatWindow.style.right = '';
+                    chatWindow.style.width = '';
+                    chatWindow.style.height = '';
+                    chatWindow.classList.add('bottom-4', 'right-4', 'sm:bottom-6', 'sm:right-6');
+                }, 300);
+            });
+
+            chatFab.addEventListener('click', () => {
+                chatFab.classList.add('hidden');
+                chatWindow.classList.remove('hidden');
+                scrollToBottom();
+            });
+
+            // === EMOJI PICKER ===
+            const emojis = ["😀", "😃", "😄", "😁", "😆", "😅", "😂", "🤣", "🥲", "☺️", "😊", "😇", "🙂", "🙃", "😉", "😌", "😍", "🥰", "😘", "😗", "😙", "😚", "😋", "😛", "😝", "😜", "🤪", "🤨", "🧐", "🤓", "😎", "🥸", "🤩", "🥳", "😏", "😒", "😞", "😔", "😟", "😕", "🙁", "☹️", "😣", "😖", "😫", "😩", "🥺", "😢", "😭", "😮‍💨", "😤", "😠", "😡", "🤬", "🤯", "😳", "🥵", "🥶", "😱", "😨", "😰", "😥", "😓", "🫣", "🤗", "🫡", "🤔", "🫣", "🤭", "🤫", "🤥", "😶", "😐", "😑", "😬", "🙄", "😯", "😦", "😧", "😮", "😲", "🥱", "😴", "🤤", "😪", "😵", "🤐", "🥴", "🤢", "🤮", "🤧", "😷", "🤒", "🤕", "🤑", "🤠", "😈", "👿", "👹", "👺", "👍", "👎", "👏", "🙌", "🫶", "👐", "🤲", "🤝", "🙏", "✌️", "🤞", "🫰", "🤟", "🤘", "👌", "🤌", "🤏", "🫳", "🫴", "👈"];
+
+            emojis.forEach(emoji => {
+                const btn = document.createElement('button');
+                btn.className = 'hover:bg-slate-100 dark:hover:bg-slate-700 p-1.5 rounded text-xl transition-colors';
+                btn.textContent = emoji;
+                btn.addEventListener('click', () => {
+                    chatInput.value += emoji;
+                    chatInput.focus();
+                });
+                emojiGrid.appendChild(btn);
+            });
+
+            btnEmojiToggle.addEventListener('click', (e) => {
+                e.stopPropagation();
+                emojiPicker.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!emojiPicker.contains(e.target) && e.target !== btnEmojiToggle) {
+                    emojiPicker.classList.add('hidden');
+                }
+            });
+
+            // Start
+            initChat();
+        });
+    </script>
+</body>
+
+</html>
