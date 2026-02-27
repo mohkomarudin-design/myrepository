@@ -42,8 +42,7 @@ CREATE TABLE trx_peminjaman (
     file_lampiran TEXT, -- Surat permintaan peminjaman (opsional)
     ttd_peminjam TEXT NOT NULL, -- Menyimpan Base64 dari Signature Pad
     ttd_pic TEXT NOT NULL,      -- Menyimpan Base64 dari Signature Pad PIC
-    status_keseluruhan TEXT NOT NULL DEFAULT 'Dipinjam' 
-    -- Status: 'Dipinjam', 'Kembali Sebagian', 'Selesai', 'Terlambat'
+    status_keseluruhan TEXT NOT NULL DEFAULT 'Dipinjam',
     
     FOREIGN KEY (id_divisi) REFERENCES master_divisi(id_divisi)
 );
@@ -111,7 +110,7 @@ INSERT INTO master_divisi (kategori, nama_divisi) VALUES
 INSERT INTO master_dokumen (no_dokumen, nama_dokumen, tahun, jenis_dokumen, status) VALUES 
 ('DOC-1001', 'SOP Keamanan Jaringan v2.0', 2024, 'SOP', 'Tersedia'),
 ('DOC-1002', 'Blueprint Arsitektur Server 2025', 2025, 'Blueprint', 'Dipinjam'),
-('DOC-1003', 'Perjanjian Kerjasama Vendor A', 2023, 'Kontrak', 'Terlambat'),
+('DOC-1003', 'Perjanjian Kerjasama Vendor A', 2023, 'Kontrak', 'Dipinjam'),
 ('DOC-1004', 'Sertifikat Kalibrasi Alat', 2024, 'Sertifikat', 'Dipinjam'),
 ('DOC-1005', 'Laporan Audit Internal Q4', 2025, 'Laporan', 'Tersedia');
 
