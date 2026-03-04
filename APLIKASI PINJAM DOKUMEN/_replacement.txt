@@ -1,0 +1,92 @@
+        let currentSort = { key: 'no_dokumen', dir: 'asc' };
+
+        function sortDatabase(key) {
+            if (currentSort.key === key) {
+                currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.key = key;
+                currentSort.dir = 'asc';
+            }
+            document.querySelectorAll('[id^="sort-"]').forEach(el => { el.textContent = '\u2195'; el.className = 'text-muted'; });
+            const icon = document.getElementById('sort-' + key);
+            if (icon) { icon.textContent = currentSort.dir === 'asc' ? '\u2191' : '\u2193'; icon.className = 'text-primary fw-bold'; }
+
+            cachedDokumen.sort((a, b) => {
+                let va = (a[key] || '').toString().toLowerCase();
+                let vb = (b[key] || '').toString().toLowerCase();
+                if (key === 'tahun') { va = parseInt(va) || 0; vb = parseInt(vb) || 0; }
+                if (va < vb) return currentSort.dir === 'asc' ? -1 : 1;
+                if (va > vb) return currentSort.dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+            renderDatabase();
+        }
+
+        function renderDatabase() {
+            const tbody = document.querySelector('#tabelDatabaseUtama tbody');
+            tbody.innerHTML = '';
+            if (cachedDokumen.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Database masih kosong</td></tr>'; return; }
+            cachedDokumen.forEach((doc, idx) => {
+                const sb = doc.status === 'Tersedia' ? 'bg-success' : (doc.status === 'Dipinjam' ? 'bg-warning text-dark' : 'bg-danger');
+                const hasFile = doc.file_path ? true : false;
+                tbody.innerHTML += `<tr>
+                <td class="fw-bold text-primary">${doc.no_dokumen}</td><td>${doc.nama_dokumen}</td><td>${doc.tahun}</td>
+                <td><span class="badge bg-secondary">${doc.jenis_dokumen}</span></td>
+                <td><span class="badge ${sb}">${doc.status}</span></td>
+                <td class="text-center"><div class="d-flex justify-content-center gap-1 flex-wrap">
+                    <button type="button" class="btn btn-sm btn-outline-info ${hasFile ? '' : 'disabled'}" data-action="preview" data-idx="${idx}" ${hasFile ? '' : 'title="Belum ada file"'}>👁️</button>
+                    <button type="button" class="btn btn-sm btn-outline-success ${hasFile ? '' : 'disabled'}" data-action="download" data-idx="${idx}" ${hasFile ? '' : 'title="Belum ada file"'}>⬇️</button>
+                    <button type="button" class="btn btn-sm btn-outline-warning" data-action="edit" data-idx="${idx}">✏️</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger ${doc.status === 'Dipinjam' ? 'disabled' : ''}" data-action="delete" data-idx="${idx}" ${doc.status === 'Dipinjam' ? 'title="Tidak bisa hapus, sedang dipinjam"' : ''}>🗑️</button>
+                </div></td></tr>`;
+            });
+
+            tbody.querySelectorAll('[data-action]').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const doc = cachedDokumen[this.dataset.idx];
+                    if (!doc) return;
+                    const action = this.dataset.action;
+                    if (action === 'preview' && doc.file_path) previewDokumen(doc.no_dokumen);
+                    else if (action === 'download' && doc.file_path) downloadDokumen(doc.no_dokumen);
+                    else if (action === 'edit') editDokumen(doc);
+                    else if (action === 'delete' && doc.status !== 'Dipinjam') hapusDokumen(doc.no_dokumen, doc.nama_dokumen);
+                });
+            });
+        }
+
+        function editDokumen(doc) {
+            const nama = prompt('Nama / Judul Dokumen:', doc.nama_dokumen);
+            if (nama === null) return;
+            const tahun = prompt('Tahun:', doc.tahun);
+            if (tahun === null) return;
+            const jenis = prompt('Jenis Dokumen (SOP/SK/Surat/Kontrak/Laporan/Lainnya):', doc.jenis_dokumen);
+            if (jenis === null) return;
+            fetch(API + '/api/dokumen/' + encodeURIComponent(doc.no_dokumen), {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nama_dokumen: nama, tahun: tahun, jenis_dokumen: jenis })
+            }).then(r => r.json()).then(data => {
+                if (data.error) throw new Error(data.error);
+                alert('✅ Dokumen berhasil diperbarui!');
+                loadDatabase();
+            }).catch(e => alert('❌ Gagal: ' + e.message));
+        }
+
+        async function hapusDokumen(noDoc, namaDoc) {
+            if (!confirm('Apakah Anda yakin ingin menghapus dokumen "' + namaDoc + '" (' + noDoc + ')?\n\nTindakan ini tidak dapat dibatalkan.')) return;
+            try {
+                const res = await fetch(API + '/api/dokumen/' + encodeURIComponent(noDoc), { method: 'DELETE' });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                alert('✅ Dokumen berhasil dihapus!');
+                loadDatabase();
+            } catch (e) { alert('❌ Gagal: ' + e.message); }
+        }
+
+        function previewDokumen(noDoc) {
+            window.open(API + '/api/dokumen/preview/' + encodeURIComponent(noDoc), '_blank');
+        }
+
+        function downloadDokumen(noDoc) {
+            window.open(API + '/api/dokumen/download/' + encodeURIComponent(noDoc), '_blank');
+        }

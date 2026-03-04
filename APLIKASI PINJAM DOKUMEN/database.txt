@@ -19,14 +19,21 @@ CREATE TABLE master_divisi (
 
 -- Tabel Master Dokumen (Database Utama)
 CREATE TABLE master_dokumen (
-    no_dokumen TEXT PRIMARY KEY, -- Contoh: 'DOC-1001'
+    no_dokumen TEXT PRIMARY KEY,
     nama_dokumen TEXT NOT NULL,
     tahun INTEGER NOT NULL,
-    jenis_dokumen TEXT NOT NULL, -- Contoh: 'SOP', 'Blueprint', 'BAST', dll.
+    jenis_dokumen TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'Tersedia' CHECK(status IN ('Tersedia', 'Dipinjam', 'Hilang')),
-    file_path TEXT -- Menyimpan path/URL file PDF jika dilampirkan
+    file_path TEXT
 );
 
+-- Tabel Admin Settings (Password & Konfigurasi)
+CREATE TABLE admin_settings (
+    id INTEGER PRIMARY KEY CHECK(id = 1),
+    password_hash TEXT NOT NULL,
+    reset_token TEXT,
+    reset_token_expiry TEXT
+);
 
 -- =========================================================================
 -- 2. TABEL TRANSAKSI PEMINJAMAN
@@ -34,26 +41,29 @@ CREATE TABLE master_dokumen (
 
 -- Header Transaksi Peminjaman
 CREATE TABLE trx_peminjaman (
-    id_transaksi TEXT PRIMARY KEY, -- Contoh: 'TRX-2602-001'
+    id_transaksi TEXT PRIMARY KEY,
     tgl_pinjam DATE NOT NULL,
     batas_waktu DATE NOT NULL,
     id_divisi INTEGER NOT NULL,
     nama_peminjam TEXT NOT NULL,
-    file_lampiran TEXT, -- Surat permintaan peminjaman (opsional)
-    ttd_peminjam TEXT NOT NULL, -- Menyimpan Base64 dari Signature Pad
-    ttd_pic TEXT NOT NULL,      -- Menyimpan Base64 dari Signature Pad PIC
-    status_keseluruhan TEXT NOT NULL DEFAULT 'Dipinjam',
+    email_peminjam TEXT,
+    file_lampiran TEXT,
+    ttd_peminjam TEXT,
+    ttd_pic TEXT,
+    status_keseluruhan TEXT NOT NULL DEFAULT 'Menunggu Persetujuan',
+    status_approval TEXT NOT NULL DEFAULT 'Menunggu',
+    catatan_tolak TEXT,
     
     FOREIGN KEY (id_divisi) REFERENCES master_divisi(id_divisi)
 );
 
--- Detail Transaksi Peminjaman (Koneksi antara Transaksi & Dokumen)
+-- Detail Transaksi Peminjaman
 CREATE TABLE detail_peminjaman (
     id_detail INTEGER PRIMARY KEY AUTOINCREMENT,
     id_transaksi TEXT NOT NULL,
     no_dokumen TEXT NOT NULL,
-    status_dokumen TEXT NOT NULL DEFAULT 'Dipinjam', -- 'Dipinjam' atau 'Sudah Kembali'
-    tgl_dikembalikan DATE, -- Kosong jika belum kembali
+    status_dokumen TEXT NOT NULL DEFAULT 'Dipinjam',
+    tgl_dikembalikan DATE,
     
     FOREIGN KEY (id_transaksi) REFERENCES trx_peminjaman(id_transaksi) ON DELETE CASCADE,
     FOREIGN KEY (no_dokumen) REFERENCES master_dokumen(no_dokumen)
@@ -63,15 +73,16 @@ CREATE TABLE detail_peminjaman (
 -- =========================================================================
 -- 3. TABEL LOG PENGEMBALIAN
 -- =========================================================================
--- Menyimpan log ketika seseorang mengembalikan dokumen (bisa bertahap)
 
 CREATE TABLE log_pengembalian (
     id_pengembalian INTEGER PRIMARY KEY AUTOINCREMENT,
     id_transaksi TEXT NOT NULL,
     tgl_kembali DATE NOT NULL,
-    nama_pengembali TEXT NOT NULL, -- Bisa berbeda dengan peminjam awal jika diwakilkan
-    ttd_pengembali TEXT NOT NULL,  -- Base64
-    ttd_pic TEXT NOT NULL,         -- Base64
+    nama_pengembali TEXT NOT NULL,
+    ttd_pengembali TEXT,
+    ttd_pic TEXT,
+    status_approval TEXT NOT NULL DEFAULT 'Menunggu',
+    catatan_tolak TEXT,
     
     FOREIGN KEY (id_transaksi) REFERENCES trx_peminjaman(id_transaksi)
 );
@@ -82,19 +93,36 @@ CREATE TABLE log_pengembalian (
 -- =========================================================================
 
 CREATE TABLE trx_penyerahan (
-    id_penyerahan TEXT PRIMARY KEY, -- Contoh: 'RCV-2602-001'
+    id_penyerahan TEXT PRIMARY KEY,
     tgl_penyerahan DATE NOT NULL,
     nama_penyerah TEXT NOT NULL,
     id_divisi INTEGER NOT NULL,
-    ttd_penyerah TEXT NOT NULL, -- Base64
-    ttd_pic TEXT NOT NULL,      -- Base64
+    ttd_penyerah TEXT,
+    ttd_pic TEXT,
+    status_approval TEXT NOT NULL DEFAULT 'Menunggu',
+    catatan_tolak TEXT,
     
     FOREIGN KEY (id_divisi) REFERENCES master_divisi(id_divisi)
 );
 
+-- =========================================================================
+-- 5. TABEL DETAIL PENYERAHAN (link penyerahan ke dokumen baru)
+-- =========================================================================
+
+CREATE TABLE detail_penyerahan (
+    id_detail INTEGER PRIMARY KEY AUTOINCREMENT,
+    id_penyerahan TEXT NOT NULL,
+    no_dokumen TEXT NOT NULL,
+    nama_dokumen TEXT NOT NULL,
+    tahun INTEGER NOT NULL,
+    jenis_dokumen TEXT NOT NULL,
+    file_path TEXT,
+
+    FOREIGN KEY (id_penyerahan) REFERENCES trx_penyerahan(id_penyerahan) ON DELETE CASCADE
+);
 
 -- =========================================================================
--- 5. SEEDING DUMMY DATA (DATA AWAL UNTUK TESTING)
+-- 6. SEEDING DUMMY DATA (DATA AWAL UNTUK TESTING)
 -- =========================================================================
 
 -- Insert Master Divisi
@@ -114,17 +142,15 @@ INSERT INTO master_dokumen (no_dokumen, nama_dokumen, tahun, jenis_dokumen, stat
 ('DOC-1004', 'Sertifikat Kalibrasi Alat', 2024, 'Sertifikat', 'Dipinjam'),
 ('DOC-1005', 'Laporan Audit Internal Q4', 2025, 'Laporan', 'Tersedia');
 
--- Insert Transaksi Peminjaman (Dummy)
-INSERT INTO trx_peminjaman (id_transaksi, tgl_pinjam, batas_waktu, id_divisi, nama_peminjam, ttd_peminjam, ttd_pic, status_keseluruhan) VALUES 
-('TRX-2602-001', '2026-02-20', '2026-02-25', 1, 'Budi Santoso', 'base64_string_here', 'base64_string_here', 'Selesai'),
-('TRX-2602-002', '2026-02-23', '2026-02-28', 3, 'Siti Aminah', 'base64_string_here', 'base64_string_here', 'Dipinjam');
+-- Insert Transaksi Peminjaman (Dummy - sudah disetujui)
+INSERT INTO trx_peminjaman (id_transaksi, tgl_pinjam, batas_waktu, id_divisi, nama_peminjam, email_peminjam, ttd_peminjam, ttd_pic, status_keseluruhan, status_approval) VALUES 
+('TRX-2602-001', '2026-02-20', '2026-02-25', 1, 'Budi Santoso', 'budi@surveyor.co.id', 'base64_string_here', 'base64_string_here', 'Selesai', 'Disetujui'),
+('TRX-2602-002', '2026-02-23', '2026-02-28', 3, 'Siti Aminah', 'siti@surveyor.co.id', 'base64_string_here', 'base64_string_here', 'Dipinjam', 'Disetujui');
 
 -- Insert Detail Peminjaman
--- Transaksi 1 (Sudah selesai semua)
 INSERT INTO detail_peminjaman (id_transaksi, no_dokumen, status_dokumen, tgl_dikembalikan) VALUES 
 ('TRX-2602-001', 'DOC-1001', 'Sudah Kembali', '2026-02-25'),
 ('TRX-2602-001', 'DOC-1005', 'Sudah Kembali', '2026-02-25');
 
--- Transaksi 2 (Masih Dipinjam)
 INSERT INTO detail_peminjaman (id_transaksi, no_dokumen, status_dokumen, tgl_dikembalikan) VALUES 
 ('TRX-2602-002', 'DOC-1002', 'Dipinjam', NULL);

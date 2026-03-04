@@ -1,0 +1,21 @@
+{
+  "name": "safety-patrol-k3-backend",
+  "version": "1.0.0",
+  "description": "Backend API untuk Aplikasi Safety Patrol K3",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "better-sqlite3": "^12.6.2",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "googleapis": "^171.4.0",
+    "multer": "^2.1.0",
+    "pdfkit": "^0.14.0"
+  }
+}

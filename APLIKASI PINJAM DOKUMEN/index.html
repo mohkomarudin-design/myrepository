@@ -145,7 +145,13 @@
                         <a class="nav-link" id="nav-database" href="#" onclick="switchTab('database')">Database
                             Dokumen</a>
                     </li>
-                    <!-- NAVIGATOR BARU: PENGATURAN ADMIN -->
+                    <!-- NAVIGATOR: PERMINTAAN MASUK (Admin) -->
+                    <li class="nav-item" id="nav-item-permintaan" style="display:none;">
+                        <a class="nav-link text-info" id="nav-permintaan" href="#" onclick="switchTab('permintaan')">📋
+                            Permintaan Masuk <span id="badgePending" class="badge bg-danger ms-1"
+                                style="display:none;">0</span></a>
+                    </li>
+                    <!-- NAVIGATOR: PENGATURAN ADMIN -->
                     <li class="nav-item">
                         <a class="nav-link text-warning" id="nav-pengaturan" href="#"
                             onclick="switchTab('pengaturan')">⚙️ Pengaturan</a>
@@ -333,6 +339,11 @@
                                         <input type="text" id="inputNamaPeminjam" class="form-control"
                                             placeholder="Masukkan nama peminjam" required>
                                     </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label">Email Peminjam</label>
+                                        <input type="email" id="inputEmailPeminjam" class="form-control"
+                                            placeholder="contoh@email.com (untuk reminder)">
+                                    </div>
                                 </div>
 
                                 <h6 class="text-primary border-bottom pb-2 mb-3">Daftar Dokumen</h6>
@@ -374,25 +385,16 @@
                                 </div>
 
                                 <h6 class="text-primary border-bottom pb-2 mb-3">Pengesahan</h6>
-                                <div class="row g-4 mb-4">
-                                    <div class="col-md-6 text-center">
-                                        <label class="form-label fw-bold">Penerima (Peminjam)</label>
-                                        <canvas id="ttdPeminjam" class="signature-pad"></canvas>
-                                        <button type="button" class="btn btn-sm btn-outline-danger mt-2"
-                                            onclick="padPeminjam.clear()">Hapus Tanda Tangan</button>
-                                    </div>
-                                    <div class="col-md-6 text-center">
-                                        <label class="form-label fw-bold">Yang Menyerahkan (PIC Arsip)</label>
-                                        <canvas id="ttdPicPinjam" class="signature-pad"></canvas>
-                                        <button type="button" class="btn btn-sm btn-outline-danger mt-2"
-                                            onclick="padPicPinjam.clear()">Hapus Tanda Tangan</button>
-                                    </div>
+                                <div class="alert alert-warning border-0 bg-warning bg-opacity-10">
+                                    <strong>ℹ️ Info:</strong> Tanda tangan pengesahan akan dilakukan oleh Admin saat
+                                    permintaan disetujui dan dokumen fisik diserahkan.
                                 </div>
 
                                 <div class="d-flex justify-content-end gap-2 border-top pt-3">
                                     <button type="button" class="btn btn-light border"
                                         onclick="switchTab('dashboard')">Batal Kembali ke Dashboard</button>
-                                    <button type="submit" class="btn btn-primary">Simpan Peminjaman & Cetak PDF</button>
+                                    <button type="submit" class="btn btn-primary">📨 Kirim Permintaan
+                                        Peminjaman</button>
                                 </div>
                             </form>
                         </div>
@@ -483,25 +485,16 @@
                                 </div>
 
                                 <h6 class="text-success border-bottom pb-2 mb-3">Pengesahan Pengembalian</h6>
-                                <div class="row g-4 mb-4">
-                                    <div class="col-md-6 text-center">
-                                        <label class="form-label fw-bold">Yang Menyerahkan (Pengembali)</label>
-                                        <canvas id="ttdPengembali" class="signature-pad"></canvas>
-                                        <button type="button" class="btn btn-sm btn-outline-danger mt-2"
-                                            onclick="padPengembali.clear()">Hapus Tanda Tangan</button>
-                                    </div>
-                                    <div class="col-md-6 text-center">
-                                        <label class="form-label fw-bold">Penerima (PIC Arsip)</label>
-                                        <canvas id="ttdPicKembali" class="signature-pad"></canvas>
-                                        <button type="button" class="btn btn-sm btn-outline-danger mt-2"
-                                            onclick="padPicKembali.clear()">Hapus Tanda Tangan</button>
-                                    </div>
+                                <div class="alert alert-warning border-0 bg-warning bg-opacity-10">
+                                    <strong>ℹ️ Info:</strong> Tanda tangan pengesahan akan dilakukan oleh Admin saat
+                                    permintaan pengembalian disetujui.
                                 </div>
 
                                 <div class="d-flex justify-content-end gap-2 border-top pt-3">
                                     <button type="button" class="btn btn-light border"
                                         onclick="switchTab('dashboard')">Batal Kembali ke Dashboard</button>
-                                    <button type="submit" class="btn btn-success">Konfirmasi & Cetak PDF</button>
+                                    <button type="submit" class="btn btn-success">📨 Kirim Permintaan
+                                        Pengembalian</button>
                                 </div>
                             </form>
                         </div>
@@ -611,26 +604,17 @@
 
                                 <h6 class="text-purple border-bottom pb-2 mb-3" style="color: #6f42c1;">Pengesahan
                                     Penyerahan</h6>
-                                <div class="row g-4 mb-4">
-                                    <div class="col-md-6 text-center">
-                                        <label class="form-label fw-bold">Yang Menyerahkan (Staf)</label>
-                                        <canvas id="ttdPenyerah" class="signature-pad"></canvas>
-                                        <button type="button" class="btn btn-sm btn-outline-danger mt-2"
-                                            onclick="padPenyerah.clear()">Hapus Tanda Tangan</button>
-                                    </div>
-                                    <div class="col-md-6 text-center">
-                                        <label class="form-label fw-bold">Penerima (PIC Arsip)</label>
-                                        <canvas id="ttdPicPenyerahan" class="signature-pad"></canvas>
-                                        <button type="button" class="btn btn-sm btn-outline-danger mt-2"
-                                            onclick="padPicPenyerahan.clear()">Hapus Tanda Tangan</button>
-                                    </div>
+                                <div class="alert alert-warning border-0 bg-warning bg-opacity-10">
+                                    <strong>ℹ️ Info:</strong> Tanda tangan pengesahan akan dilakukan oleh Admin saat
+                                    penyerahan dokumen baru disetujui.
                                 </div>
 
                                 <div class="d-flex justify-content-end gap-2 border-top pt-3">
                                     <button type="button" class="btn btn-light border"
                                         onclick="switchTab('dashboard')">Batal Kembali ke Dashboard</button>
                                     <button type="submit" class="btn"
-                                        style="background-color: #6f42c1; color: white;">Simpan & Cetak PDF</button>
+                                        style="background-color: #6f42c1; color: white;">📨 Kirim Permintaan
+                                        Penyerahan</button>
                                 </div>
                             </form>
                         </div>
@@ -640,7 +624,115 @@
         </div>
 
         <!-- ========================================== -->
-        <!-- VIEW 5: DATABASE DOKUMEN                   -->
+        <!-- VIEW 5A: PERMINTAAN MASUK (Admin Only)     -->
+        <!-- ========================================== -->
+        <div id="view-permintaan" class="view-section">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h4 class="mb-0 text-info fw-bold">📋 Permintaan Masuk</h4>
+                    <small class="text-muted">Kelola permintaan peminjaman, pengembalian, dan penyerahan dokumen</small>
+                </div>
+                <button class="btn btn-sm btn-outline-info" onclick="loadPending()">🔄 Refresh</button>
+            </div>
+            <div id="pendingContainer">
+                <div class="text-center text-muted py-5">Memuat data permintaan...</div>
+            </div>
+        </div>
+
+        <!-- Modal Approval (Enhanced: Detail + Dual Signatures + PDF) -->
+        <div class="modal fade" id="modalApproval" tabindex="-1">
+            <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+                <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header bg-success text-white">
+                        <h6 class="modal-title fw-bold" id="modalApprovalTitle">✅ Setujui Permintaan</h6>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4" id="modalApprovalBody">
+                        <!-- Info Permintaan -->
+                        <div id="approvalInfo" class="row mb-3 bg-light p-3 rounded"></div>
+
+                        <!-- Tabel Dokumen -->
+                        <h6 class="fw-bold text-secondary mb-2">📄 Daftar Dokumen</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered table-sm align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>No Dokumen</th>
+                                        <th>Nama Dokumen</th>
+                                        <th class="text-center">Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="approvalDocList">
+                                    <tr>
+                                        <td colspan="3" class="text-center text-muted">Memuat...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Dual Signature Pads -->
+                        <h6 class="fw-bold text-secondary mb-2">✍️ Tanda Tangan Pengesahan</h6>
+                        <div class="row g-3 mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-primary small">Yang Menyerahkan</label>
+                                <input type="text" id="namaPICPenyerah" class="form-control form-control-sm mb-2"
+                                    placeholder="Nama PIC Penyerah">
+                                <canvas id="ttdPenyerah" class="signature-pad"
+                                    style="border:1px solid #ced4da;border-radius:0.375rem;width:100%;height:130px;background:#fff;"></canvas>
+                                <button type="button" class="btn btn-sm btn-outline-danger mt-1"
+                                    onclick="if(padPenyerah) padPenyerah.clear()">Hapus</button>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label fw-bold text-success small">Yang Menerima</label>
+                                <input type="text" id="namaPICPenerima" class="form-control form-control-sm mb-2"
+                                    placeholder="Nama PIC Penerima">
+                                <canvas id="ttdPenerima" class="signature-pad"
+                                    style="border:1px solid #ced4da;border-radius:0.375rem;width:100%;height:130px;background:#fff;"></canvas>
+                                <button type="button" class="btn btn-sm btn-outline-danger mt-1"
+                                    onclick="if(padPenerima) padPenerima.clear()">Hapus</button>
+                            </div>
+                        </div>
+
+                        <input type="hidden" id="approvalType">
+                        <input type="hidden" id="approvalId">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-info text-white fw-bold" onclick="generateApprovalPDF()">📄
+                            Cetak PDF</button>
+                        <button type="button" class="btn btn-success fw-bold" onclick="prosesApproval()">✅ Setujui &
+                            Sahkan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal Reject -->
+        <div class="modal fade" id="modalReject" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content shadow-lg border-0">
+                    <div class="modal-header bg-danger text-white">
+                        <h6 class="modal-title fw-bold">❌ Tolak Permintaan</h6>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body p-4">
+                        <label class="form-label">Alasan Penolakan:</label>
+                        <textarea id="inputCatatanTolak" class="form-control" rows="3"
+                            placeholder="Masukkan alasan penolakan..."></textarea>
+                        <input type="hidden" id="rejectType">
+                        <input type="hidden" id="rejectId">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                        <button type="button" class="btn btn-danger fw-bold" onclick="prosesReject()">❌ Tolak
+                            Permintaan</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- VIEW 5B: DATABASE DOKUMEN                  -->
         <!-- ========================================== -->
         <div id="view-database" class="view-section">
             <div class="d-flex justify-content-between align-items-center mb-4">
@@ -669,12 +761,18 @@
                         <table class="table table-hover align-middle mb-0" id="tabelDatabaseUtama">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="15%">No Dokumen</th>
-                                    <th width="30%">Nama / Judul Dokumen</th>
-                                    <th width="10%">Tahun</th>
-                                    <th width="10%">Jenis</th>
-                                    <th width="15%">Status Arsip</th>
-                                    <th width="20%" class="text-center">Aksi</th>
+                                    <th width="13%" style="cursor:pointer" onclick="sortDatabase('no_dokumen')">No
+                                        Dokumen <span id="sort-no_dokumen" class="text-muted">↕</span></th>
+                                    <th width="25%" style="cursor:pointer" onclick="sortDatabase('nama_dokumen')">Nama /
+                                        Judul <span id="sort-nama_dokumen" class="text-muted">↕</span></th>
+                                    <th width="8%" style="cursor:pointer" onclick="sortDatabase('tahun')">Tahun <span
+                                            id="sort-tahun" class="text-muted">↕</span></th>
+                                    <th width="9%" style="cursor:pointer" onclick="sortDatabase('jenis_dokumen')">Jenis
+                                        <span id="sort-jenis_dokumen" class="text-muted">↕</span>
+                                    </th>
+                                    <th width="12%" style="cursor:pointer" onclick="sortDatabase('status')">Status <span
+                                            id="sort-status" class="text-muted">↕</span></th>
+                                    <th width="33%" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -693,9 +791,10 @@
             <div class="d-flex justify-content-between align-items-center mb-4">
                 <div>
                     <h4 class="mb-0 text-warning fw-bold">⚙️ Pengaturan Sistem Admin</h4>
-                    <small class="text-muted">Kelola data master referensi seperti Divisi dan Cabang</small>
+                    <small class="text-muted">Kelola data master referensi dan pengaturan admin</small>
                 </div>
                 <div>
+                    <span id="serverStatus" class="badge bg-secondary me-2">⏳ Memeriksa koneksi...</span>
                     <button class="btn btn-sm btn-outline-danger" onclick="logoutAdmin()">🔒 Kunci & Logout</button>
                 </div>
             </div>
@@ -721,6 +820,30 @@
                                 </div>
                                 <button type="submit" class="btn btn-warning w-100 fw-bold">Simpan ke Master
                                     Data</button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Ubah Password Admin -->
+                    <div class="card shadow-sm border-dark mt-4">
+                        <div class="card-header bg-dark text-white fw-bold">🔑 Ubah Password Admin</div>
+                        <div class="card-body">
+                            <form onsubmit="ubahPasswordAdmin(event)">
+                                <div class="mb-3">
+                                    <label class="form-label">Password Lama</label>
+                                    <input type="password" id="inputOldPassword" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Password Baru</label>
+                                    <input type="password" id="inputNewPassword" class="form-control" required
+                                        minlength="4">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">Konfirmasi Password Baru</label>
+                                    <input type="password" id="inputConfirmPassword" class="form-control" required
+                                        minlength="4">
+                                </div>
+                                <button type="submit" class="btn btn-dark w-100 fw-bold">Ubah Password</button>
                             </form>
                         </div>
                     </div>
@@ -835,7 +958,21 @@
                     <div id="pesanErrorLogin" class="text-danger small mb-3 d-none fw-bold">Kata sandi salah!</div>
                     <button type="button" class="btn btn-warning w-100 fw-bold" onclick="prosesLoginAdmin()">Login
                         Sekarang</button>
-                    <div class="mt-3 small text-muted">Hint: admin123</div>
+                    <div class="mt-3">
+                        <a href="#" class="small text-muted" onclick="tampilkanResetPassword(event)">Lupa Password?</a>
+                    </div>
+                    <!-- Reset Password Form (hidden by default) -->
+                    <div id="resetPasswordForm" class="d-none mt-3 text-start border-top pt-3">
+                        <p class="small text-muted mb-2">Masukkan token dari file <code>admin_reset.json</code>:</p>
+                        <input type="text" id="inputResetToken" class="form-control form-control-sm mb-2"
+                            placeholder="Paste token reset di sini">
+                        <input type="password" id="inputResetNewPassword" class="form-control form-control-sm mb-2"
+                            placeholder="Password baru">
+                        <button type="button" class="btn btn-sm btn-info w-100" onclick="prosesResetPassword()">Reset
+                            Password</button>
+                        <button type="button" class="btn btn-sm btn-outline-secondary w-100 mt-1"
+                            onclick="generateResetFile()">📁 Generate File Reset</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -850,16 +987,12 @@
         // SIONE - Frontend dengan Backend API (Node.js + SQLite)
         // =============================================
 
-        // Gunakan http://localhost:3000 jika dibuka sebagai file lokal, jika tidak gunakan relative path
         const API = window.location.protocol === 'file:' ? 'http://localhost:3000' : '';
-
-        if (window.location.protocol === 'file:') {
-            console.warn("SIONE: Aplikasi dibuka sebagai file lokal. Menghubungkan ke API di http://localhost:3000");
-        }
-        let padPeminjam, padPicPinjam, padPengembali, padPicKembali, padPenyerah, padPicPenyerahan;
+        let padPenyerah, padPenerima;
         let isAdminLoggedIn = false;
         let cachedDokumen = [];
         let cachedDivisi = [];
+        let currentApprovalData = null;
 
         // --- Helper: Format tanggal ---
         function formatTgl(dateStr) {
@@ -872,7 +1005,7 @@
 
         // --- Navigasi Tab ---
         function switchTab(tabId) {
-            if (tabId === 'pengaturan' && !isAdminLoggedIn) {
+            if ((tabId === 'pengaturan' || tabId === 'permintaan') && !isAdminLoggedIn) {
                 const loginModal = new bootstrap.Modal(document.getElementById('modalLoginAdmin'));
                 loginModal.show();
                 document.getElementById('modalLoginAdmin').addEventListener('shown.bs.modal', () => {
@@ -883,47 +1016,140 @@
             document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
             document.getElementById('view-' + tabId).classList.add('active');
-            document.getElementById('nav-' + tabId).classList.add('active');
+            const navEl = document.getElementById('nav-' + tabId);
+            if (navEl) navEl.classList.add('active');
 
             if (tabId === 'dashboard') loadDashboard();
             if (tabId === 'database') loadDatabase();
-            if (tabId === 'pengaturan') loadDivisi();
+            if (tabId === 'pengaturan') { loadDivisi(); checkServerConnection(); }
             if (tabId === 'peminjaman' || tabId === 'penyerahan') loadDivisi();
-
-            setTimeout(() => initSignaturesForView(tabId), 100);
+            if (tabId === 'permintaan') loadPending();
         }
 
-        // --- Login / Logout Admin ---
-        function prosesLoginAdmin() {
+        // --- Login / Logout Admin (API-based) ---
+        async function prosesLoginAdmin() {
             const pwd = document.getElementById('inputPasswordAdmin').value;
             const errMsg = document.getElementById('pesanErrorLogin');
-            if (pwd === 'admin123') {
-                isAdminLoggedIn = true; errMsg.classList.add('d-none');
-                document.getElementById('inputPasswordAdmin').value = '';
-                bootstrap.Modal.getInstance(document.getElementById('modalLoginAdmin')).hide();
-                switchTab('pengaturan');
-            } else {
+            try {
+                const res = await fetch(API + '/api/admin/login', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ password: pwd })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    isAdminLoggedIn = true; errMsg.classList.add('d-none');
+                    document.getElementById('inputPasswordAdmin').value = '';
+                    document.getElementById('nav-item-permintaan').style.display = '';
+                    bootstrap.Modal.getInstance(document.getElementById('modalLoginAdmin')).hide();
+                    switchTab('pengaturan');
+                    loadPendingBadge();
+                } else {
+                    errMsg.textContent = data.error || 'Kata sandi salah!';
+                    errMsg.classList.remove('d-none');
+                    document.getElementById('inputPasswordAdmin').value = '';
+                    document.getElementById('inputPasswordAdmin').focus();
+                }
+            } catch (e) {
+                errMsg.textContent = 'Gagal menghubungi server: ' + e.message;
                 errMsg.classList.remove('d-none');
-                document.getElementById('inputPasswordAdmin').value = '';
-                document.getElementById('inputPasswordAdmin').focus();
             }
         }
-        function logoutAdmin() { isAdminLoggedIn = false; alert("Sesi Admin telah dikunci kembali."); switchTab('dashboard'); }
+
+        function logoutAdmin() {
+            isAdminLoggedIn = false;
+            document.getElementById('nav-item-permintaan').style.display = 'none';
+            alert("Sesi Admin telah dikunci kembali.");
+            switchTab('dashboard');
+        }
+
+        // --- Lupa Password ---
+        function tampilkanResetPassword(e) {
+            e.preventDefault();
+            document.getElementById('resetPasswordForm').classList.toggle('d-none');
+        }
+
+        async function generateResetFile() {
+            try {
+                const res = await fetch(API + '/api/admin/generate-reset', { method: 'POST' });
+                const data = await res.json();
+                if (data.success) {
+                    alert('✅ File reset berhasil dibuat!\n\nLokasi: admin_reset.json di folder project.\nBuka file tersebut dan copy token, lalu paste di kolom token.');
+                } else {
+                    alert('❌ Gagal: ' + (data.error || 'Unknown error'));
+                }
+            } catch (e) { alert('❌ Gagal menghubungi server: ' + e.message); }
+        }
+
+        async function prosesResetPassword() {
+            const token = document.getElementById('inputResetToken').value.trim();
+            const newPwd = document.getElementById('inputResetNewPassword').value.trim();
+            if (!token || !newPwd) return alert('Isi token dan password baru!');
+            try {
+                const res = await fetch(API + '/api/admin/reset-password', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token, new_password: newPwd })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('✅ Password berhasil direset! Silakan login dengan password baru.');
+                    document.getElementById('resetPasswordForm').classList.add('d-none');
+                    document.getElementById('inputResetToken').value = '';
+                    document.getElementById('inputResetNewPassword').value = '';
+                } else {
+                    alert('❌ Gagal: ' + (data.error || 'Token tidak valid'));
+                }
+            } catch (e) { alert('❌ Gagal: ' + e.message); }
+        }
+
+        // --- Ubah Password Admin ---
+        async function ubahPasswordAdmin(event) {
+            event.preventDefault();
+            const oldPwd = document.getElementById('inputOldPassword').value;
+            const newPwd = document.getElementById('inputNewPassword').value;
+            const confirmPwd = document.getElementById('inputConfirmPassword').value;
+            if (newPwd !== confirmPwd) return alert('Password baru dan konfirmasi tidak cocok!');
+            if (newPwd.length < 4) return alert('Password minimal 4 karakter!');
+            try {
+                const res = await fetch(API + '/api/admin/password', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ old_password: oldPwd, new_password: newPwd })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    alert('✅ Password berhasil diubah!');
+                    document.getElementById('inputOldPassword').value = '';
+                    document.getElementById('inputNewPassword').value = '';
+                    document.getElementById('inputConfirmPassword').value = '';
+                } else {
+                    alert('❌ Gagal: ' + (data.error || 'Unknown error'));
+                }
+            } catch (e) { alert('❌ Gagal: ' + e.message); }
+        }
+
+        // --- Server Connection Check ---
+        async function checkServerConnection() {
+            const statusEl = document.getElementById('serverStatus');
+            if (!statusEl) return;
+            try {
+                await fetch(API + '/api/divisi');
+                statusEl.textContent = '🟢 Server Terhubung';
+                statusEl.className = 'badge bg-success me-2';
+            } catch {
+                statusEl.textContent = '🔴 Server Tidak Terhubung';
+                statusEl.className = 'badge bg-danger me-2';
+            }
+        }
 
         // --- Reminder & Navigasi ---
-        function kirimReminder(nama, trxId) {
-            if (confirm(`Kirim email peringatan keterlambatan kepada ${nama} (ID: ${trxId})?`)) {
-                setTimeout(() => alert(`✅ Email reminder berhasil dikirim ke ${nama}.`), 800);
+        function kirimReminder(nama, trxId, email) {
+            const emailInfo = email ? `\nEmail: ${email}` : '\n(Email tidak tersedia)';
+            if (confirm(`Kirim email peringatan keterlambatan kepada ${nama}?${emailInfo}\n\nID: ${trxId}`)) {
+                setTimeout(() => alert(`✅ Email reminder berhasil dikirim ke ${nama}${email ? ' (' + email + ')' : ''}.`), 800);
             }
         }
         function goToPengembalian(trxId) {
             document.getElementById('inputSearchTrx').value = trxId;
             switchTab('pengembalian');
-        }
-
-        // --- PDF Print ---
-        function generateAndSavePDF(callback) {
-            setTimeout(() => { window.print(); setTimeout(() => { if (callback) callback(); }, 500); }, 300);
         }
 
         // =============================================
@@ -936,16 +1162,22 @@
                     fetch(API + '/api/dashboard').then(r => r.json()),
                     fetch(API + '/api/transaksi').then(r => r.json())
                 ]);
-                // Summary cards
                 document.querySelector('.border-warning .card-body h3').innerHTML = `${dashRes.sedangDipinjam} <small class="text-muted fs-6">Transaksi</small>`;
                 document.querySelector('.border-danger .card-body h3').innerHTML = `${dashRes.terlambat} <small class="text-muted fs-6">Dokumen</small>`;
                 document.querySelector('.border-blue .card-body h3').textContent = dashRes.totalBulanIni;
+
+                // Update pending badge
+                if (dashRes.pendingCount > 0 && isAdminLoggedIn) {
+                    const badge = document.getElementById('badgePending');
+                    badge.textContent = dashRes.pendingCount;
+                    badge.style.display = '';
+                }
 
                 // Tabel transaksi
                 const tbody = document.querySelector('#view-dashboard table tbody');
                 tbody.innerHTML = '';
                 if (trxRes.length === 0) {
-                    tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">Belum ada transaksi</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="8" class="text-center text-muted py-3">Belum ada transaksi yang disetujui</td></tr>';
                     return;
                 }
                 trxRes.forEach(t => {
@@ -956,7 +1188,7 @@
                         aksi = `<button class="btn btn-sm btn-light border" onclick="lihatArsip('${t.id_transaksi}')">Lihat Arsip</button>`;
                     } else if (t.status_keseluruhan === 'Terlambat') {
                         badge = '<span class="badge bg-danger">Terlambat!</span>';
-                        aksi = `<button class="btn btn-sm btn-danger" onclick="kirimReminder('${t.nama_peminjam}','${t.id_transaksi}')">Kirim Reminder</button>`;
+                        aksi = `<button class="btn btn-sm btn-danger" onclick="kirimReminder('${t.nama_peminjam}','${t.id_transaksi}','${t.email_peminjam || ''}')">Kirim Reminder</button>`;
                     } else if (t.status_keseluruhan === 'Kembali Sebagian') {
                         badge = `<span class="badge bg-info text-dark">Kembali Sebagian (${kembali}/${t.jml_dokumen})</span>`;
                         aksi = `<button class="btn btn-sm btn-info text-white fw-bold" onclick="showDetailModal('${t.id_transaksi}')">Detail Dokumen</button>`;
@@ -967,7 +1199,7 @@
                     tbody.innerHTML += `<tr>
                     <td><span class="text-primary fw-bold">${t.id_transaksi}</span></td>
                     <td>${formatTgl(t.tgl_pinjam)}</td>
-                    <td>${t.nama_peminjam}</td>
+                    <td>${t.nama_peminjam}${t.email_peminjam ? '<br><small class="text-muted">' + t.email_peminjam + '</small>' : ''}</td>
                     <td>${t.nama_divisi}</td>
                     <td>${t.jml_dokumen} Dokumen</td>
                     <td>${formatTgl(t.batas_waktu)}</td>
@@ -978,7 +1210,7 @@
             } catch (e) { console.error('Dashboard error:', e); }
         }
 
-        function lihatArsip(id) { alert('Menampilkan arsip transaksi: ' + id); }
+        function lihatArsip(id) { showDetailModal(id); }
 
         async function showDetailModal(trxId) {
             try {
@@ -1002,9 +1234,10 @@
                         <td class="text-muted">${d.tgl_dikembalikan ? formatTgl(d.tgl_dikembalikan) : '- Belum -'}</td>
                     </tr>`).join('')}</tbody>
                 </table></div>`;
+                const allReturned = data.details.every(d => d.status_dokumen === 'Sudah Kembali');
                 document.querySelector('#modalDetail .modal-footer').innerHTML = `
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Tutup</button>
-                <button type="button" class="btn btn-success fw-bold" data-bs-dismiss="modal" onclick="goToPengembalian('${trxId}')">Terima Sisa Dokumen</button>`;
+                ${allReturned ? '' : `<button type="button" class="btn btn-success fw-bold" data-bs-dismiss="modal" onclick="goToPengembalian('${trxId}')">Terima Sisa Dokumen</button>`}`;
                 new bootstrap.Modal(document.getElementById('modalDetail')).show();
             } catch (e) { console.error('Detail error:', e); }
         }
@@ -1016,22 +1249,99 @@
             } catch (e) { console.error('Load DB error:', e); }
         }
 
+        let currentSort = { key: 'no_dokumen', dir: 'asc' };
+
+        function sortDatabase(key) {
+            if (currentSort.key === key) {
+                currentSort.dir = currentSort.dir === 'asc' ? 'desc' : 'asc';
+            } else {
+                currentSort.key = key;
+                currentSort.dir = 'asc';
+            }
+            document.querySelectorAll('[id^="sort-"]').forEach(el => { el.textContent = '\u2195'; el.className = 'text-muted'; });
+            const icon = document.getElementById('sort-' + key);
+            if (icon) { icon.textContent = currentSort.dir === 'asc' ? '\u2191' : '\u2193'; icon.className = 'text-primary fw-bold'; }
+
+            cachedDokumen.sort((a, b) => {
+                let va = (a[key] || '').toString().toLowerCase();
+                let vb = (b[key] || '').toString().toLowerCase();
+                if (key === 'tahun') { va = parseInt(va) || 0; vb = parseInt(vb) || 0; }
+                if (va < vb) return currentSort.dir === 'asc' ? -1 : 1;
+                if (va > vb) return currentSort.dir === 'asc' ? 1 : -1;
+                return 0;
+            });
+            renderDatabase();
+        }
+
         function renderDatabase() {
             const tbody = document.querySelector('#tabelDatabaseUtama tbody');
             tbody.innerHTML = '';
             if (cachedDokumen.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Database masih kosong</td></tr>'; return; }
-            cachedDokumen.forEach(doc => {
+            cachedDokumen.forEach((doc, idx) => {
                 const sb = doc.status === 'Tersedia' ? 'bg-success' : (doc.status === 'Dipinjam' ? 'bg-warning text-dark' : 'bg-danger');
+                const hasFile = doc.file_path ? true : false;
                 tbody.innerHTML += `<tr>
                 <td class="fw-bold text-primary">${doc.no_dokumen}</td><td>${doc.nama_dokumen}</td><td>${doc.tahun}</td>
                 <td><span class="badge bg-secondary">${doc.jenis_dokumen}</span></td>
                 <td><span class="badge ${sb}">${doc.status}</span></td>
-                <td class="text-center"><div class="d-flex justify-content-center gap-1">
-                    <button type="button" class="btn btn-sm btn-outline-info" onclick="alert('Preview: ${doc.nama_dokumen}')">👁️ Preview</button>
-                    <button type="button" class="btn btn-sm btn-outline-success" onclick="alert('Download: ${doc.nama_dokumen}.pdf')">⬇️ Download</button>
+                <td class="text-center"><div class="d-flex justify-content-center gap-1 flex-wrap">
+                    <button type="button" class="btn btn-sm btn-outline-info ${hasFile ? '' : 'disabled'}" data-action="preview" data-idx="${idx}" ${hasFile ? '' : 'title="Belum ada file"'}>👁️</button>
+                    <button type="button" class="btn btn-sm btn-outline-success ${hasFile ? '' : 'disabled'}" data-action="download" data-idx="${idx}" ${hasFile ? '' : 'title="Belum ada file"'}>⬇️</button>
+                    <button type="button" class="btn btn-sm btn-outline-warning" data-action="edit" data-idx="${idx}">✏️</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger ${doc.status === 'Dipinjam' ? 'disabled' : ''}" data-action="delete" data-idx="${idx}" ${doc.status === 'Dipinjam' ? 'title="Tidak bisa hapus, sedang dipinjam"' : ''}>🗑️</button>
                 </div></td></tr>`;
             });
+
+            tbody.querySelectorAll('[data-action]').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    const doc = cachedDokumen[this.dataset.idx];
+                    if (!doc) return;
+                    const action = this.dataset.action;
+                    if (action === 'preview' && doc.file_path) previewDokumen(doc.no_dokumen);
+                    else if (action === 'download' && doc.file_path) downloadDokumen(doc.no_dokumen);
+                    else if (action === 'edit') editDokumen(doc);
+                    else if (action === 'delete' && doc.status !== 'Dipinjam') hapusDokumen(doc.no_dokumen, doc.nama_dokumen);
+                });
+            });
         }
+
+        function editDokumen(doc) {
+            const nama = prompt('Nama / Judul Dokumen:', doc.nama_dokumen);
+            if (nama === null) return;
+            const tahun = prompt('Tahun:', doc.tahun);
+            if (tahun === null) return;
+            const jenis = prompt('Jenis Dokumen (SOP/SK/Surat/Kontrak/Laporan/Lainnya):', doc.jenis_dokumen);
+            if (jenis === null) return;
+            fetch(API + '/api/dokumen/' + encodeURIComponent(doc.no_dokumen), {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ nama_dokumen: nama, tahun: tahun, jenis_dokumen: jenis })
+            }).then(r => r.json()).then(data => {
+                if (data.error) throw new Error(data.error);
+                alert('✅ Dokumen berhasil diperbarui!');
+                loadDatabase();
+            }).catch(e => alert('❌ Gagal: ' + e.message));
+        }
+
+        async function hapusDokumen(noDoc, namaDoc) {
+            if (!confirm('Apakah Anda yakin ingin menghapus dokumen "' + namaDoc + '" (' + noDoc + ')?\n\nTindakan ini tidak dapat dibatalkan.')) return;
+            try {
+                const res = await fetch(API + '/api/dokumen/' + encodeURIComponent(noDoc), { method: 'DELETE' });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                alert('✅ Dokumen berhasil dihapus!');
+                loadDatabase();
+            } catch (e) { alert('❌ Gagal: ' + e.message); }
+        }
+
+        function previewDokumen(noDoc) {
+            window.open(API + '/api/dokumen/preview/' + encodeURIComponent(noDoc), '_blank');
+        }
+
+        function downloadDokumen(noDoc) {
+            window.open(API + '/api/dokumen/download/' + encodeURIComponent(noDoc), '_blank');
+        }
+
 
         async function updateDatalists() {
             try {
@@ -1089,7 +1399,9 @@
             const nama = document.getElementById('inputNamaDivisi').value.trim();
             if (!nama) return;
             try {
-                await fetch(API + '/api/divisi', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kategori, nama_divisi: nama }) });
+                const res = await fetch(API + '/api/divisi', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ kategori, nama_divisi: nama }) });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
                 document.getElementById('inputNamaDivisi').value = '';
                 alert("Data Divisi/Cabang berhasil ditambahkan!"); loadDivisi();
             } catch (e) { alert('Gagal menyimpan: ' + e.message); }
@@ -1098,19 +1410,289 @@
         async function hapusMasterDivisi(id, nama) {
             if (!confirm(`Yakin ingin menghapus ${nama}?`)) return;
             try {
-                await fetch(API + '/api/divisi/' + id, { method: 'DELETE' }); loadDivisi();
+                const res = await fetch(API + '/api/divisi/' + id, { method: 'DELETE' });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                loadDivisi();
             } catch (e) { alert('Gagal menghapus: ' + e.message); }
         }
 
         // =============================================
-        // SUBMIT FORMS
+        // APPROVAL WORKFLOW
+        // =============================================
+
+        async function loadPendingBadge() {
+            try {
+                const data = await fetch(API + '/api/dashboard').then(r => r.json());
+                const badge = document.getElementById('badgePending');
+                if (data.pendingCount > 0) {
+                    badge.textContent = data.pendingCount;
+                    badge.style.display = '';
+                } else {
+                    badge.style.display = 'none';
+                }
+            } catch (e) { console.error(e); }
+        }
+
+        async function loadPending() {
+            const container = document.getElementById('pendingContainer');
+            try {
+                const data = await fetch(API + '/api/pending').then(r => r.json());
+                let html = '';
+                const total = data.peminjaman.length + data.pengembalian.length + data.penyerahan.length;
+                if (total === 0) {
+                    container.innerHTML = '<div class="text-center text-muted py-5"><h5>✅ Tidak ada permintaan yang menunggu persetujuan</h5></div>';
+                    return;
+                }
+
+                // Peminjaman
+                if (data.peminjaman.length > 0) {
+                    html += '<h6 class="fw-bold text-primary mb-3">📘 Permintaan Peminjaman</h6>';
+                    data.peminjaman.forEach(p => {
+                        html += `<div class="card mb-3 border-primary">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">${p.id} — ${p.nama}</h6>
+                                        <small class="text-muted">Divisi: ${p.nama_divisi} | Tanggal: ${formatTgl(p.tanggal)} | Batas: ${formatTgl(p.batas_waktu)} | ${p.jml_dokumen} Dokumen</small>
+                                        ${p.email ? '<br><small class="text-muted">📧 ' + p.email + '</small>' : ''}
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-success" onclick="showApprovalModal('peminjaman','${p.id}')">✅ Setujui</button>
+                                        <button class="btn btn-sm btn-danger" onclick="showRejectModal('peminjaman','${p.id}')">❌ Tolak</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                }
+
+                // Pengembalian
+                if (data.pengembalian.length > 0) {
+                    html += '<h6 class="fw-bold text-success mt-4 mb-3">📗 Permintaan Pengembalian</h6>';
+                    data.pengembalian.forEach(p => {
+                        const dokList = p.dokumen_list ? p.dokumen_list.join(', ') : '';
+                        html += `<div class="card mb-3 border-success">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">Pengembalian #${p.id} — ${p.nama}</h6>
+                                        <small class="text-muted">Transaksi: ${p.id_transaksi} | Divisi: ${p.nama_divisi} | Tanggal: ${formatTgl(p.tanggal)}</small>
+                                        ${dokList ? '<br><small class="text-muted">Dokumen: ' + dokList + '</small>' : ''}
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-success" onclick="showApprovalModal('pengembalian','${p.id}')">✅ Setujui</button>
+                                        <button class="btn btn-sm btn-danger" onclick="showRejectModal('pengembalian','${p.id}')">❌ Tolak</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                }
+
+                // Penyerahan
+                if (data.penyerahan.length > 0) {
+                    html += '<h6 class="fw-bold mt-4 mb-3" style="color:#6f42c1;">📙 Permintaan Penyerahan Baru</h6>';
+                    data.penyerahan.forEach(p => {
+                        html += `<div class="card mb-3" style="border-color:#6f42c1;">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-start">
+                                    <div>
+                                        <h6 class="fw-bold mb-1">${p.id} — ${p.nama}</h6>
+                                        <small class="text-muted">Divisi: ${p.nama_divisi} | Tanggal: ${formatTgl(p.tanggal)} | ${p.jml_dokumen} Dokumen</small>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-sm btn-success" onclick="showApprovalModal('penyerahan','${p.id}')">✅ Setujui</button>
+                                        <button class="btn btn-sm btn-danger" onclick="showRejectModal('penyerahan','${p.id}')">❌ Tolak</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>`;
+                    });
+                }
+
+                container.innerHTML = html;
+            } catch (e) {
+                container.innerHTML = `<div class="text-center text-danger py-5">Gagal memuat data: ${e.message}</div>`;
+            }
+        }
+
+        async function showApprovalModal(type, id) {
+            document.getElementById('approvalType').value = type;
+            document.getElementById('approvalId').value = id;
+
+            // Fetch detail from API
+            const infoDiv = document.getElementById('approvalInfo');
+            const docList = document.getElementById('approvalDocList');
+            infoDiv.innerHTML = '<div class="text-muted">Memuat...</div>';
+            docList.innerHTML = '<tr><td colspan="3" class="text-center text-muted">Memuat...</td></tr>';
+            document.getElementById('namaPICPenyerah').value = '';
+            document.getElementById('namaPICPenerima').value = '';
+
+            const typeLabel = type === 'peminjaman' ? '📘 Peminjaman' : (type === 'pengembalian' ? '📗 Pengembalian' : '📙 Penyerahan');
+            document.getElementById('modalApprovalTitle').textContent = '✅ Setujui ' + typeLabel + ' — ' + id;
+
+            const modal = new bootstrap.Modal(document.getElementById('modalApproval'));
+            modal.show();
+
+            // Init dual signature pads
+            setTimeout(() => {
+                function initPad(canvasId) {
+                    const canvas = document.getElementById(canvasId);
+                    const r = Math.max(window.devicePixelRatio || 1, 1);
+                    canvas.width = canvas.offsetWidth * r;
+                    canvas.height = canvas.offsetHeight * r;
+                    canvas.getContext('2d').scale(r, r);
+                    return new SignaturePad(canvas);
+                }
+                padPenyerah = initPad('ttdPenyerah');
+                padPenerima = initPad('ttdPenerima');
+            }, 300);
+
+            // Fetch details
+            try {
+                const data = await fetch(API + '/api/pending/' + type + '/' + id).then(r => r.json());
+                currentApprovalData = { type, id, data };
+
+                if (type === 'peminjaman') {
+                    infoDiv.innerHTML = `
+                        <div class="col-sm-3"><span class="text-muted small">Peminjam:</span><br><strong>${data.nama_peminjam}</strong></div>
+                        <div class="col-sm-3"><span class="text-muted small">Divisi:</span><br><strong>${data.nama_divisi}</strong></div>
+                        <div class="col-sm-3"><span class="text-muted small">Tgl Pinjam:</span><br><strong>${formatTgl(data.tgl_pinjam)}</strong></div>
+                        <div class="col-sm-3"><span class="text-muted small">Batas Waktu:</span><br><strong>${formatTgl(data.batas_waktu)}</strong></div>`;
+                    docList.innerHTML = data.details.map(d => `<tr>
+                        <td class="fw-bold">${d.no_dokumen}</td><td>${d.nama_dokumen}</td>
+                        <td class="text-center"><span class="badge bg-warning text-dark">Akan Dipinjam</span></td></tr>`).join('');
+                    document.getElementById('namaPICPenyerah').value = data.nama_peminjam || '';
+
+                } else if (type === 'pengembalian') {
+                    infoDiv.innerHTML = `
+                        <div class="col-sm-3"><span class="text-muted small">Pengembali:</span><br><strong>${data.nama_pengembali}</strong></div>
+                        <div class="col-sm-3"><span class="text-muted small">Divisi:</span><br><strong>${data.nama_divisi}</strong></div>
+                        <div class="col-sm-3"><span class="text-muted small">Transaksi:</span><br><strong>${data.trx_id || data.id_transaksi}</strong></div>
+                        <div class="col-sm-3"><span class="text-muted small">Tgl Kembali:</span><br><strong>${formatTgl(data.tgl_kembali)}</strong></div>`;
+                    docList.innerHTML = data.details.map(d => `<tr>
+                        <td class="fw-bold">${d.no_dokumen}</td><td>${d.nama_dokumen}</td>
+                        <td class="text-center"><span class="badge bg-success">Dikembalikan</span></td></tr>`).join('');
+                    document.getElementById('namaPICPenyerah').value = data.nama_pengembali || '';
+
+                } else if (type === 'penyerahan') {
+                    infoDiv.innerHTML = `
+                        <div class="col-sm-4"><span class="text-muted small">Penyerah:</span><br><strong>${data.nama_penyerah}</strong></div>
+                        <div class="col-sm-4"><span class="text-muted small">Divisi:</span><br><strong>${data.nama_divisi}</strong></div>
+                        <div class="col-sm-4"><span class="text-muted small">Tgl Penyerahan:</span><br><strong>${formatTgl(data.tgl_penyerahan)}</strong></div>`;
+                    docList.innerHTML = data.details.map(d => `<tr>
+                        <td class="fw-bold">${d.no_dokumen}</td><td>${d.nama_dokumen}</td>
+                        <td class="text-center"><span class="badge bg-info text-dark">${d.jenis_dokumen || 'Baru'}</span></td></tr>`).join('');
+                    document.getElementById('namaPICPenyerah').value = data.nama_penyerah || '';
+                }
+            } catch (e) {
+                infoDiv.innerHTML = '<div class="text-danger">Gagal memuat detail: ' + e.message + '</div>';
+            }
+        }
+
+        function showRejectModal(type, id) {
+            document.getElementById('rejectType').value = type;
+            document.getElementById('rejectId').value = id;
+            document.getElementById('inputCatatanTolak').value = '';
+            new bootstrap.Modal(document.getElementById('modalReject')).show();
+        }
+
+        async function prosesApproval() {
+            const type = document.getElementById('approvalType').value;
+            const id = document.getElementById('approvalId').value;
+            const ttd_penyerah = padPenyerah && !padPenyerah.isEmpty() ? padPenyerah.toDataURL() : 'n/a';
+            const ttd_pic = padPenerima && !padPenerima.isEmpty() ? padPenerima.toDataURL() : 'n/a';
+            try {
+                const res = await fetch(API + '/api/approve', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, id, ttd_penyerah, ttd_pic })
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                bootstrap.Modal.getInstance(document.getElementById('modalApproval')).hide();
+                alert('✅ Permintaan berhasil disetujui!');
+                loadPending(); loadPendingBadge(); updateDatalists();
+            } catch (e) { alert('❌ Gagal: ' + e.message); }
+        }
+
+        function generateApprovalPDF() {
+            const modalBody = document.getElementById('modalApprovalBody');
+            const title = document.getElementById('modalApprovalTitle').textContent;
+
+            // Clone modal body and convert canvases to images
+            const clone = modalBody.cloneNode(true);
+            const canvases = modalBody.querySelectorAll('canvas');
+            const cloneCanvases = clone.querySelectorAll('canvas');
+            canvases.forEach((canvas, i) => {
+                try {
+                    const img = document.createElement('img');
+                    img.src = canvas.toDataURL('image/png');
+                    img.style.width = '100%';
+                    img.style.height = canvas.style.height || '130px';
+                    img.style.border = '1px solid #ccc';
+                    img.style.borderRadius = '4px';
+                    img.style.background = '#fff';
+                    cloneCanvases[i].replaceWith(img);
+                } catch (e) { console.warn('Canvas convert error:', e); }
+            });
+
+            // Remove buttons from clone
+            clone.querySelectorAll('button, .btn').forEach(b => b.remove());
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`<!DOCTYPE html><html><head><title>${title}</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body { padding: 30px; font-family: Arial, sans-serif; }
+                @media print {
+                    button, .btn { display: none !important; }
+                }
+                .header-print { text-align: center; margin-bottom: 20px; border-bottom: 3px solid #004a9f; padding-bottom: 15px; }
+                .header-print h4 { color: #004a9f; margin-bottom: 5px; }
+                .footer-print { margin-top: 30px; text-align: center; font-size: 12px; color: #888; border-top: 1px solid #ddd; padding-top: 10px; }
+            </style></head><body>
+            <div class="header-print">
+                <h4>SIONE — Sistem Informasi Log Book Dokumen</h4>
+                <small>PT Surveyor Indonesia</small>
+            </div>
+            <h5 class="mb-4">${title}</h5>
+            ${clone.innerHTML}
+            <div class="footer-print">
+                <p>Dicetak pada: ${new Date().toLocaleString('id-ID')} | Dokumen ini digenerate secara otomatis oleh SIONE</p>
+            </div>
+            </body></html>`);
+            printWindow.document.close();
+            setTimeout(() => { printWindow.print(); }, 500);
+        }
+
+        async function prosesReject() {
+            const type = document.getElementById('rejectType').value;
+            const id = document.getElementById('rejectId').value;
+            const catatan = document.getElementById('inputCatatanTolak').value.trim();
+            if (!catatan) return alert('Masukkan alasan penolakan!');
+            try {
+                const res = await fetch(API + '/api/reject', {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ type, id, catatan })
+                });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+                bootstrap.Modal.getInstance(document.getElementById('modalReject')).hide();
+                alert('❌ Permintaan berhasil ditolak.');
+                loadPending(); loadPendingBadge();
+            } catch (e) { alert('❌ Gagal: ' + e.message); }
+        }
+
+        // =============================================
+        // SUBMIT FORMS (request-based, no signatures)
         // =============================================
 
         async function submitForm(event, type) {
             event.preventDefault();
             const btn = event.target.querySelector('button[type="submit"]');
             const origText = btn.innerText;
-            btn.innerText = "⏳ Menyimpan..."; btn.disabled = true;
+            btn.innerText = "⏳ Mengirim..."; btn.disabled = true;
 
             try {
                 if (type === 'peminjaman') {
@@ -1122,20 +1704,17 @@
                         batas_waktu: document.getElementById('inputBatasWaktu').value,
                         id_divisi: parseInt(document.getElementById('inputDivisiPinjam').value),
                         nama_peminjam: document.getElementById('inputNamaPeminjam').value,
-                        dokumen,
-                        ttd_peminjam: padPeminjam && !padPeminjam.isEmpty() ? padPeminjam.toDataURL() : 'n/a',
-                        ttd_pic: padPicPinjam && !padPicPinjam.isEmpty() ? padPicPinjam.toDataURL() : 'n/a'
+                        email_peminjam: document.getElementById('inputEmailPeminjam').value || null,
+                        dokumen
                     };
                     const res = await fetch(API + '/api/peminjaman', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
                     const data = await res.json();
                     if (data.error) throw new Error(data.error);
-                    generateAndSavePDF(() => {
-                        document.querySelector('#tabelDokumen tbody').innerHTML = '<tr id="emptyRow"><td colspan="3" class="text-center text-muted">Belum ada dokumen yang dipilih</td></tr>';
-                        btn.innerText = origText; btn.disabled = false;
-                        if (padPeminjam) padPeminjam.clear(); if (padPicPinjam) padPicPinjam.clear();
-                        form.reset(); alert(`✅ Peminjaman ${data.id_transaksi} berhasil disimpan!`);
-                        updateDatalists(); switchTab('dashboard');
-                    });
+                    document.querySelector('#tabelDokumen tbody').innerHTML = '<tr id="emptyRow"><td colspan="3" class="text-center text-muted">Belum ada dokumen yang dipilih</td></tr>';
+                    btn.innerText = origText; btn.disabled = false;
+                    event.target.reset();
+                    alert(`✅ Permintaan peminjaman ${data.id_transaksi} berhasil dikirim!\n\nMenunggu persetujuan Admin.`);
+                    switchTab('dashboard');
 
                 } else if (type === 'pengembalian') {
                     const checks = document.querySelectorAll('.check-kembali:checked');
@@ -1144,44 +1723,55 @@
                     const trxId = checks[0].dataset.trx;
                     const body = {
                         id_transaksi: trxId, dokumen_kembali,
-                        nama_pengembali: event.target.querySelector('input[type="text"]').value || 'n/a',
-                        ttd_pengembali: padPengembali && !padPengembali.isEmpty() ? padPengembali.toDataURL() : 'n/a',
-                        ttd_pic: padPicKembali && !padPicKembali.isEmpty() ? padPicKembali.toDataURL() : 'n/a'
+                        nama_pengembali: event.target.querySelector('input[type="text"]:not([readonly]):not([id])').value || 'n/a'
                     };
                     const res = await fetch(API + '/api/pengembalian', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
                     const data = await res.json();
                     if (data.error) throw new Error(data.error);
-                    generateAndSavePDF(() => {
-                        document.getElementById('inputSearchTrx').value = '';
-                        document.getElementById('tabelDokumenKembali').innerHTML = '<tr><td colspan="4" class="text-center text-muted">Silakan cari dokumen di atas</td></tr>';
-                        btn.innerText = origText; btn.disabled = false;
-                        if (padPengembali) padPengembali.clear(); if (padPicKembali) padPicKembali.clear();
-                        alert("✅ Pengembalian dokumen berhasil!"); updateDatalists(); switchTab('dashboard');
-                    });
+                    document.getElementById('inputSearchTrx').value = '';
+                    document.getElementById('tabelDokumenKembali').innerHTML = '<tr><td colspan="4" class="text-center text-muted">Silakan cari dokumen di atas</td></tr>';
+                    btn.innerText = origText; btn.disabled = false;
+                    alert("✅ Permintaan pengembalian berhasil dikirim!\n\nMenunggu persetujuan Admin.");
+                    switchTab('dashboard');
 
                 } else if (type === 'penyerahan') {
                     const rows = document.querySelectorAll('#tabelDokumenPenyerahan tbody tr:not(#emptyRowPenyerahan)');
                     if (rows.length === 0) { btn.innerText = origText; btn.disabled = false; return alert("Tambah minimal satu dokumen!"); }
                     const dokumen = [];
-                    rows.forEach(r => { const c = r.querySelectorAll('td'); if (c.length >= 4) dokumen.push({ no: c[0].innerText, nama: c[1].innerText, tahun: c[2].innerText, jenis: c[3].innerText }); });
-                    const form = event.target;
+                    const fileInputs = [];
+                    rows.forEach(r => {
+                        const c = r.querySelectorAll('td');
+                        if (c.length >= 4) {
+                            dokumen.push({ no: c[0].innerText, nama: c[1].innerText, tahun: c[2].innerText, jenis: c[3].innerText });
+                            const fileInput = r.querySelector('input[type="file"]');
+                            fileInputs.push(fileInput && fileInput.files[0] ? { no: c[0].innerText, file: fileInput.files[0] } : null);
+                        }
+                    });
                     const body = {
                         nama_penyerah: document.getElementById('inputNamaPenyerah').value,
                         id_divisi: parseInt(document.getElementById('inputDivisiPenyerahan').value),
-                        dokumen,
-                        ttd_penyerah: padPenyerah && !padPenyerah.isEmpty() ? padPenyerah.toDataURL() : 'n/a',
-                        ttd_pic: padPicPenyerahan && !padPicPenyerahan.isEmpty() ? padPicPenyerahan.toDataURL() : 'n/a'
+                        dokumen
                     };
                     const res = await fetch(API + '/api/penyerahan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
                     const data = await res.json();
                     if (data.error) throw new Error(data.error);
-                    generateAndSavePDF(() => {
-                        document.querySelector('#tabelDokumenPenyerahan tbody').innerHTML = '<tr id="emptyRowPenyerahan"><td colspan="5" class="text-center text-muted">Belum ada dokumen yang ditambah</td></tr>';
-                        btn.innerText = origText; btn.disabled = false;
-                        if (padPenyerah) padPenyerah.clear(); if (padPicPenyerahan) padPicPenyerahan.clear();
-                        form.reset(); alert(`✅ Dokumen baru berhasil diserahkan! ID: ${data.id_penyerahan}`);
-                        updateDatalists(); switchTab('database');
-                    });
+
+                    // Upload attached files for each document
+                    for (const fi of fileInputs) {
+                        if (fi && fi.file) {
+                            const fd = new FormData();
+                            fd.append('file', fi.file);
+                            try {
+                                await fetch(API + '/api/dokumen/upload/' + encodeURIComponent(fi.no), { method: 'POST', body: fd });
+                            } catch (e) { console.warn('File upload error for ' + fi.no + ':', e); }
+                        }
+                    }
+
+                    document.querySelector('#tabelDokumenPenyerahan tbody').innerHTML = '<tr id="emptyRowPenyerahan"><td colspan="5" class="text-center text-muted">Belum ada dokumen yang ditambah</td></tr>';
+                    btn.innerText = origText; btn.disabled = false;
+                    event.target.reset();
+                    alert(`✅ Permintaan penyerahan ${data.id_penyerahan} berhasil dikirim!\n\nMenunggu persetujuan Admin.`);
+                    switchTab('dashboard');
                 }
             } catch (e) { btn.innerText = origText; btn.disabled = false; alert('❌ Error: ' + e.message); }
         }
@@ -1210,23 +1800,23 @@
             if (!val) return alert("Ketik ID Transaksi atau No Dokumen!");
             const tbody = document.getElementById('tabelDokumenKembali');
             try {
-                // Cari berdasarkan ID transaksi dulu
                 let trxId = val.split(' - ')[0].trim();
                 const res = await fetch(API + '/api/transaksi/' + trxId);
                 if (res.ok) {
                     const data = await res.json();
+                    if (data.status_approval !== 'Disetujui') {
+                        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-warning py-3">Transaksi ini belum disetujui oleh Admin.</td></tr>';
+                        return;
+                    }
                     const dipinjam = data.details.filter(d => d.status_dokumen === 'Dipinjam');
                     if (dipinjam.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Semua dokumen sudah dikembalikan.</td></tr>'; return; }
-                    // Set info peminjam
                     const infoFields = document.querySelectorAll('#view-pengembalian .form-control[readonly]');
                     if (infoFields[0]) infoFields[0].value = formatTgl(data.tgl_pinjam);
                     if (infoFields[1]) infoFields[1].value = data.nama_peminjam;
                     if (infoFields[2]) infoFields[2].value = data.nama_divisi;
                     if (infoFields[3]) infoFields[3].value = todayFormatted();
-                    // Isi nama pengembali
                     const namaPengembali = document.querySelector('#view-pengembalian input[type="text"]:not([readonly]):not([id])');
                     if (namaPengembali) namaPengembali.value = data.nama_peminjam;
-
                     tbody.innerHTML = dipinjam.map(d => `<tr>
                     <td class="text-center align-middle"><input class="form-check-input check-kembali" type="checkbox" value="${d.no_dokumen}" data-trx="${data.id_transaksi}" style="transform:scale(1.5);" checked></td>
                     <td class="fw-bold">${d.no_dokumen}</td><td>${d.nama_dokumen}</td>
@@ -1254,14 +1844,6 @@
             tbody.appendChild(tr);
             document.getElementById('inputNoDokumenPeny').value = ''; document.getElementById('inputNamaDokumenPeny').value = '';
             document.getElementById('inputTahunDokumenPeny').value = ''; document.getElementById('inputJenisDokumenPeny').value = '';
-        }
-
-        // --- Tanda Tangan ---
-        function resizeCanvas(c) { const r = Math.max(window.devicePixelRatio || 1, 1); c.width = c.offsetWidth * r; c.height = c.offsetHeight * r; c.getContext("2d").scale(r, r); }
-        function initSignaturesForView(view) {
-            if (view === 'peminjaman') { const a = document.getElementById('ttdPeminjam'), b = document.getElementById('ttdPicPinjam'); if (!padPeminjam) { resizeCanvas(a); resizeCanvas(b); padPeminjam = new SignaturePad(a); padPicPinjam = new SignaturePad(b); } }
-            else if (view === 'pengembalian') { const a = document.getElementById('ttdPengembali'), b = document.getElementById('ttdPicKembali'); if (!padPengembali) { resizeCanvas(a); resizeCanvas(b); padPengembali = new SignaturePad(a); padPicKembali = new SignaturePad(b); } }
-            else if (view === 'penyerahan') { const a = document.getElementById('ttdPenyerah'), b = document.getElementById('ttdPicPenyerahan'); if (!padPenyerah) { resizeCanvas(a); resizeCanvas(b); padPenyerah = new SignaturePad(a); padPicPenyerahan = new SignaturePad(b); } }
         }
 
         // --- Set tanggal otomatis ---
