@@ -126,11 +126,14 @@ app.get('/api/services', async (req, res) => {
         const db = await getPool();
         const result = await db.all(`
             SELECT sc.ServiceID, sc.ServiceName, sc.Description, sc.SubCategoryID,
-                   ms.SubCategoryName, mc.CategoryName, mp.PortfolioName
+                   ms.SubCategoryName, mc.CategoryName, mp.PortfolioName,
+                   GROUP_CONCAT(pp.ParameterName, ', ') as Parameters
             FROM ServiceCatalog sc
             LEFT JOIN MasterSubCategories ms ON sc.SubCategoryID = ms.SubCategoryID
             LEFT JOIN MasterCategories mc ON ms.CategoryID = mc.CategoryID
             LEFT JOIN MasterPortfolios mp ON mc.PortfolioID = mp.PortfolioID
+            LEFT JOIN PricingParameters pp ON sc.ServiceID = pp.ServiceID
+            GROUP BY sc.ServiceID
         `);
         res.json(result);
     } catch (err) { res.status(500).json({ error: err.message }); }

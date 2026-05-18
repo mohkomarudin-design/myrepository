@@ -342,37 +342,57 @@
                                     <div class="col-md-6">
                                         <label class="form-label">Email Peminjam</label>
                                         <input type="email" id="inputEmailPeminjam" class="form-control"
-                                            placeholder="contoh@email.com (untuk reminder)">
+                                            placeholder="contoh@email.com" required>
                                     </div>
                                 </div>
 
-                                <h6 class="text-primary border-bottom pb-2 mb-3">Daftar Dokumen</h6>
-                                <div class="row g-3 mb-3">
-                                    <div class="col-md-10">
-                                        <input type="text" id="inputDokumen" class="form-control"
-                                            list="listDokumenTersedia"
-                                            placeholder="Ketik No / Nama Dokumen dari database...">
-                                        <datalist id="listDokumenTersedia"></datalist>
+                                <h6 class="text-primary border-bottom pb-2 mb-3">Katalog Dokumen Tersedia</h6>
+                                <div class="row g-2 mb-2">
+                                    <div class="col-md-6">
+                                        <input type="text" id="filterKatalogPinjam" class="form-control form-control-sm" placeholder="🔍 Cari No / Nama Dokumen..." oninput="renderKatalogPinjam()">
                                     </div>
-                                    <div class="col-md-2 d-grid">
-                                        <button type="button" class="btn btn-secondary" onclick="tambahDokumen()">+
-                                            Tambah</button>
+                                    <div class="col-md-6">
+                                        <select id="filterKatalogJenis" class="form-select form-select-sm" onchange="renderKatalogPinjam()">
+                                            <option value="">Semua Jenis</option>
+                                            <option value="SOP">SOP</option>
+                                            <option value="Blueprint">Blueprint</option>
+                                            <option value="Laporan">Laporan</option>
+                                            <option value="Kontrak">Kontrak</option>
+                                            <option value="Sertifikat">Sertifikat</option>
+                                            <option value="BAST">BAST</option>
+                                            <option value="Lainnya">Lainnya</option>
+                                        </select>
                                     </div>
                                 </div>
-
-                                <div class="table-responsive mb-4">
-                                    <table class="table table-bordered table-hover" id="tabelDokumen">
-                                        <thead class="table-light">
+                                <div class="table-responsive mb-4" style="max-height: 250px; overflow-y: auto; border: 1px solid #dee2e6; border-radius: 0.375rem;">
+                                    <table class="table table-hover align-middle mb-0" id="tabelKatalogPinjam" style="font-size: 0.9rem;">
+                                        <thead class="table-light" style="position: sticky; top: 0; z-index: 1;">
                                             <tr>
-                                                <th width="20%">No Dokumen</th>
-                                                <th width="60%">Nama Dokumen</th>
-                                                <th width="20%" class="text-center">Aksi</th>
+                                                <th width="25%">No Dokumen</th>
+                                                <th width="45%">Nama Dokumen</th>
+                                                <th width="15%">Jenis</th>
+                                                <th width="15%" class="text-center">Aksi</th>
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <tr><td colspan="4" class="text-center text-muted">Memuat dokumen...</td></tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <h6 class="text-success border-bottom pb-2 mb-3">🛒 Keranjang Peminjaman</h6>
+                                <div class="table-responsive mb-4">
+                                    <table class="table table-bordered table-hover align-middle" id="tabelDokumen">
+                                        <thead class="table-light">
                                             <tr>
-                                                <td colspan="3" class="text-center text-muted" id="emptyRow">Belum ada
-                                                    dokumen yang dipilih</td>
+                                                <th width="25%">No Dokumen</th>
+                                                <th width="60%">Nama Dokumen</th>
+                                                <th width="15%" class="text-center">Aksi</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr id="emptyRow">
+                                                <td colspan="3" class="text-center text-muted">Keranjang masih kosong. Silakan klik '+ Pinjam' pada katalog di atas.</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -418,11 +438,10 @@
 
                             <div class="row mb-4 align-items-end bg-light p-3 rounded border">
                                 <div class="col-md-8">
-                                    <label class="form-label fw-bold">Cari No Dokumen / Transaksi (yang sedang
-                                        dipinjam)</label>
+                                    <label class="form-label fw-bold">Cari Nama / Email Peminjam</label>
                                     <input type="text" id="inputSearchTrx" class="form-control"
-                                        list="listDokumenDipinjam" placeholder="Pilih atau Ketik No Dokumen...">
-                                    <datalist id="listDokumenDipinjam"></datalist>
+                                        list="listPeminjamAktif" placeholder="Ketik Nama atau Email...">
+                                    <datalist id="listPeminjamAktif"></datalist>
                                 </div>
                                 <div class="col-md-4 d-grid">
                                     <button type="button" class="btn btn-secondary"
@@ -548,24 +567,24 @@
                                 <h6 class="text-purple border-bottom pb-2 mb-3" style="color: #6f42c1;">Senarai Dokumen
                                     Baru</h6>
                                 <div class="row g-2 mb-3 align-items-end">
-                                    <div class="col-md-3">
+                                    <div class="col-md-2">
                                         <label class="form-label small text-muted mb-1">No Dokumen</label>
                                         <input type="text" id="inputNoDokumenPeny" class="form-control form-control-sm"
                                             placeholder="Contoh: DOC-2026-001">
                                     </div>
-                                    <div class="col-md-4">
+                                    <div class="col-md-3">
                                         <label class="form-label small text-muted mb-1">Nama Dokumen</label>
                                         <input type="text" id="inputNamaDokumenPeny"
-                                            class="form-control form-control-sm" placeholder="Nama atau Judul Dokumen">
+                                            class="form-control form-control-sm" placeholder="Nama atau Judul">
                                     </div>
                                     <div class="col-md-2">
                                         <label class="form-label small text-muted mb-1">Tahun</label>
                                         <input type="number" id="inputTahunDokumenPeny"
                                             class="form-control form-control-sm" placeholder="Contoh: 2026">
                                     </div>
-                                    <div class="col-md-2">
+                                    <div class="col-md-3">
                                         <label class="form-label small text-muted mb-1">Jenis Dokumen</label>
-                                        <select id="inputJenisDokumenPeny" class="form-select form-select-sm">
+                                        <select id="inputJenisDokumenPeny" class="form-select form-select-sm" onchange="toggleKontrakFields()">
                                             <option value="">Pilih Jenis...</option>
                                             <option value="SOP">SOP</option>
                                             <option value="Blueprint">Blueprint</option>
@@ -576,9 +595,24 @@
                                             <option value="Lainnya">Lainnya</option>
                                         </select>
                                     </div>
-                                    <div class="col-md-1 d-grid">
-                                        <button type="button" class="btn btn-secondary btn-sm"
-                                            onclick="tambahDokumenPenyerahan()">+ Tambah</button>
+                                    <div class="col-md-2 d-flex gap-1 align-items-end">
+                                        <button type="button" class="btn btn-secondary btn-sm flex-grow-1"
+                                            onclick="tambahDokumenPenyerahan()" title="Tambah Manual">+ Tambah</button>
+                                        <button type="button" class="btn btn-success btn-sm flex-grow-1"
+                                            onclick="document.getElementById('importExcelFile').click()" title="Import Data Excel">📥 Import</button>
+                                        <a href="#" onclick="window.open('/api/dokumen/template?t=' + Date.now(), '_blank'); return false;" class="btn btn-outline-success btn-sm" title="Unduh Template Excel">📄</a>
+                                        <input type="file" id="importExcelFile" accept=".xlsx, .xls" style="display: none" onchange="importExcel(event)">
+                                    </div>
+                                </div>
+
+                                <div class="row g-2 mb-3 align-items-end d-none" id="rowKontrakPeny">
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-muted mb-1">Nama Klien (Khusus Kontrak)</label>
+                                        <input type="text" id="inputNamaKlienPeny" class="form-control form-control-sm" placeholder="Contoh: PT Surveyor Indonesia">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="form-label small text-muted mb-1">Nilai Proyek (Khusus Kontrak)</label>
+                                        <input type="text" id="inputNilaiProyekPeny" class="form-control form-control-sm" placeholder="Contoh: Rp 500.000.000">
                                     </div>
                                 </div>
 
@@ -587,7 +621,7 @@
                                         <thead class="table-light">
                                             <tr>
                                                 <th width="15%">No Dokumen</th>
-                                                <th width="35%">Nama Dokumen</th>
+                                                <th width="35%">Nama Dokumen & Info Klien</th>
                                                 <th width="10%">Tahun</th>
                                                 <th width="15%">Jenis</th>
                                                 <th width="25%" class="text-center">File & Aksi</th>
@@ -748,12 +782,57 @@
             </div>
 
             <div class="card shadow">
-                <div class="card-header bg-white d-flex justify-content-between align-items-center py-3">
-                    <h6 class="mb-0 fw-bold">Katalog Dokumen</h6>
-                    <div class="d-flex gap-2">
-                        <input type="text" class="form-control form-control-sm" placeholder="Cari No Dokumen / Judul..."
-                            style="width: 250px;">
-                        <button class="btn btn-sm btn-outline-secondary">Cari</button>
+                <div class="card-header bg-white py-3">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="mb-0 fw-bold">Katalog Dokumen</h6>
+                        <div class="d-flex gap-2">
+                            <a href="/api/dokumen/export" target="_blank" class="btn btn-sm btn-success fw-bold">⬇️ Download Excel</a>
+                            <button type="button" class="btn btn-sm btn-warning fw-bold btn-import-tempat" style="display:none;"
+                                onclick="document.getElementById('importTempatFile').click()">📥 Import Tempat Penyimpanan</button>
+                            <input type="file" id="importTempatFile" accept=".xlsx,.xls" style="display:none" onchange="importTempatPenyimpanan(event)">
+                        </div>
+                    </div>
+                    <div class="row g-2 mb-2">
+                        <div class="col-md-3">
+                            <input type="text" id="filterNo" class="form-control form-control-sm" placeholder="No Dokumen..." oninput="renderDatabase()">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" id="filterNama" class="form-control form-control-sm" placeholder="Nama / Judul..." oninput="renderDatabase()">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" id="filterTahun" class="form-control form-control-sm" placeholder="Tahun..." oninput="renderDatabase()">
+                        </div>
+                        <div class="col-md-3">
+                            <select id="filterJenis" class="form-select form-select-sm" onchange="renderDatabase()">
+                                <option value="">Semua Jenis</option>
+                                <option value="SOP">SOP</option>
+                                <option value="Blueprint">Blueprint</option>
+                                <option value="Laporan">Laporan</option>
+                                <option value="Kontrak">Kontrak</option>
+                                <option value="Sertifikat">Sertifikat</option>
+                                <option value="BAST">BAST</option>
+                                <option value="Lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-2">
+                            <select id="filterStatus" class="form-select form-select-sm" onchange="renderDatabase()">
+                                <option value="">Semua Status</option>
+                                <option value="Tersedia">Tersedia</option>
+                                <option value="Dipinjam">Dipinjam</option>
+                                <option value="Hilang">Hilang</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="filterTempat" class="form-control form-control-sm" placeholder="Tempat Penyimpanan..." oninput="renderDatabase()">
+                        </div>
+                        <div class="col-md-4">
+                            <input type="text" id="filterKlien" class="form-control form-control-sm" placeholder="Nama Klien..." oninput="renderDatabase()">
+                        </div>
+                        <div class="col-md-3">
+                            <input type="text" id="filterNilai" class="form-control form-control-sm" placeholder="Nilai Proyek..." oninput="renderDatabase()">
+                        </div>
                     </div>
                 </div>
                 <div class="card-body p-0">
@@ -761,18 +840,14 @@
                         <table class="table table-hover align-middle mb-0" id="tabelDatabaseUtama">
                             <thead class="table-light">
                                 <tr>
-                                    <th width="13%" style="cursor:pointer" onclick="sortDatabase('no_dokumen')">No
-                                        Dokumen <span id="sort-no_dokumen" class="text-muted">↕</span></th>
-                                    <th width="25%" style="cursor:pointer" onclick="sortDatabase('nama_dokumen')">Nama /
-                                        Judul <span id="sort-nama_dokumen" class="text-muted">↕</span></th>
-                                    <th width="8%" style="cursor:pointer" onclick="sortDatabase('tahun')">Tahun <span
-                                            id="sort-tahun" class="text-muted">↕</span></th>
-                                    <th width="9%" style="cursor:pointer" onclick="sortDatabase('jenis_dokumen')">Jenis
-                                        <span id="sort-jenis_dokumen" class="text-muted">↕</span>
-                                    </th>
-                                    <th width="12%" style="cursor:pointer" onclick="sortDatabase('status')">Status <span
-                                            id="sort-status" class="text-muted">↕</span></th>
-                                    <th width="33%" class="text-center">Aksi</th>
+                                    <th width="12%" style="cursor:pointer" onclick="sortDatabase('no_dokumen')">No Dokumen <span id="sort-no_dokumen" class="text-muted">↕</span></th>
+                                    <th width="18%" style="cursor:pointer" onclick="sortDatabase('nama_dokumen')">Nama / Judul <span id="sort-nama_dokumen" class="text-muted">↕</span></th>
+                                    <th width="15%" style="cursor:pointer" onclick="sortDatabase('nama_klien')">Klien & Nilai Proyek <span id="sort-nama_klien" class="text-muted">↕</span></th>
+                                    <th width="8%" style="cursor:pointer" onclick="sortDatabase('tahun')">Tahun <span id="sort-tahun" class="text-muted">↕</span></th>
+                                    <th width="8%" style="cursor:pointer" onclick="sortDatabase('jenis_dokumen')">Jenis <span id="sort-jenis_dokumen" class="text-muted">↕</span></th>
+                                    <th width="10%" style="cursor:pointer" onclick="sortDatabase('status')">Status <span id="sort-status" class="text-muted">↕</span></th>
+                                    <th width="14%" style="cursor:pointer" onclick="sortDatabase('tempat_penyimpanan')">Tempat <span id="sort-tempat_penyimpanan" class="text-muted">↕</span></th>
+                                    <th width="15%" class="text-center">Aksi</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -978,9 +1053,79 @@
         </div>
     </div>
 
+    <!-- Modal Edit Dokumen -->
+    <div class="modal fade" id="modalEditDokumen" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content shadow-lg border-0">
+                <div class="modal-header bg-warning">
+                    <h6 class="modal-title fw-bold">✏️ Edit Data Dokumen</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="formEditDokumen" onsubmit="submitEditDokumen(event)">
+                        <input type="hidden" id="editOldNoDokumen">
+                        <div class="mb-2">
+                            <label class="form-label small">No Dokumen</label>
+                            <input type="text" id="editNoDokumen" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small">Nama / Judul Dokumen</label>
+                            <input type="text" id="editNamaDokumen" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="row g-2 mb-2">
+                            <div class="col-6">
+                                <label class="form-label small">Tahun</label>
+                                <input type="number" id="editTahun" class="form-control form-control-sm" required>
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Jenis Dokumen</label>
+                                <select id="editJenis" class="form-select form-select-sm" required onchange="toggleEditKontrakFields()">
+                                    <option value="SOP">SOP</option>
+                                    <option value="Blueprint">Blueprint</option>
+                                    <option value="Laporan">Laporan</option>
+                                    <option value="Kontrak">Kontrak</option>
+                                    <option value="Sertifikat">Sertifikat</option>
+                                    <option value="BAST">BAST</option>
+                                    <option value="Lainnya">Lainnya</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-2 mb-2 d-none" id="rowEditKontrak">
+                            <div class="col-6">
+                                <label class="form-label small">Nama Klien</label>
+                                <input type="text" id="editNamaKlien" class="form-control form-control-sm">
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label small">Nilai Proyek</label>
+                                <input type="text" id="editNilaiProyek" class="form-control form-control-sm">
+                            </div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small">Status</label>
+                            <select id="editStatus" class="form-select form-select-sm" required>
+                                <option value="Tersedia">Tersedia</option>
+                                <option value="Dipinjam">Dipinjam</option>
+                                <option value="Hilang">Hilang</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small">Tempat Penyimpanan <small class="text-danger" id="infoTempatPenyimpanan">(Hanya Admin)</small></label>
+                            <input type="text" id="editTempatPenyimpanan" class="form-control form-control-sm" placeholder="Contoh: Rak A-1">
+                        </div>
+                        <div class="d-flex justify-content-end gap-2 mt-3">
+                            <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Batal</button>
+                            <button type="submit" class="btn btn-warning btn-sm fw-bold">Simpan Perubahan</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
     <script>
         // =============================================
@@ -1040,6 +1185,7 @@
                     isAdminLoggedIn = true; errMsg.classList.add('d-none');
                     document.getElementById('inputPasswordAdmin').value = '';
                     document.getElementById('nav-item-permintaan').style.display = '';
+                    document.querySelectorAll('.btn-import-tempat').forEach(b => b.style.display = '');
                     bootstrap.Modal.getInstance(document.getElementById('modalLoginAdmin')).hide();
                     switchTab('pengaturan');
                     loadPendingBadge();
@@ -1058,6 +1204,7 @@
         function logoutAdmin() {
             isAdminLoggedIn = false;
             document.getElementById('nav-item-permintaan').style.display = 'none';
+            document.querySelectorAll('.btn-import-tempat').forEach(b => b.style.display = 'none');
             alert("Sesi Admin telah dikunci kembali.");
             switchTab('dashboard');
         }
@@ -1276,19 +1423,50 @@
         function renderDatabase() {
             const tbody = document.querySelector('#tabelDatabaseUtama tbody');
             tbody.innerHTML = '';
-            if (cachedDokumen.length === 0) { tbody.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Database masih kosong</td></tr>'; return; }
-            cachedDokumen.forEach((doc, idx) => {
+            
+            const fNo = (document.getElementById('filterNo') ? document.getElementById('filterNo').value.toLowerCase() : '');
+            const fNama = (document.getElementById('filterNama') ? document.getElementById('filterNama').value.toLowerCase() : '');
+            const fTahun = (document.getElementById('filterTahun') ? document.getElementById('filterTahun').value : '');
+            const fJenis = (document.getElementById('filterJenis') ? document.getElementById('filterJenis').value : '');
+            const fStatus = (document.getElementById('filterStatus') ? document.getElementById('filterStatus').value : '');
+            const fTempat = (document.getElementById('filterTempat') ? document.getElementById('filterTempat').value.toLowerCase() : '');
+            const fKlien = (document.getElementById('filterKlien') ? document.getElementById('filterKlien').value.toLowerCase() : '');
+            const fNilai = (document.getElementById('filterNilai') ? document.getElementById('filterNilai').value.toLowerCase() : '');
+
+            const filteredDocs = cachedDokumen.filter(doc => {
+                if (fNo && !doc.no_dokumen.toLowerCase().includes(fNo)) return false;
+                if (fNama && !doc.nama_dokumen.toLowerCase().includes(fNama)) return false;
+                if (fTahun && doc.tahun.toString() !== fTahun) return false;
+                if (fJenis && doc.jenis_dokumen !== fJenis) return false;
+                if (fStatus && doc.status !== fStatus) return false;
+                if (fTempat && !(doc.tempat_penyimpanan || '').toLowerCase().includes(fTempat)) return false;
+                if (fKlien && !(doc.nama_klien || '').toLowerCase().includes(fKlien)) return false;
+                if (fNilai && !(doc.nilai_proyek || '').toLowerCase().includes(fNilai)) return false;
+                return true;
+            });
+
+            if (filteredDocs.length === 0) { tbody.innerHTML = '<tr><td colspan="7" class="text-center text-muted">Data tidak ditemukan</td></tr>'; return; }
+            
+            filteredDocs.forEach((doc) => {
                 const sb = doc.status === 'Tersedia' ? 'bg-success' : (doc.status === 'Dipinjam' ? 'bg-warning text-dark' : 'bg-danger');
                 const hasFile = doc.file_path ? true : false;
+                const originalIdx = cachedDokumen.indexOf(doc);
+                
+                let infoKlienHtml = '';
+                if (doc.jenis_dokumen === 'Kontrak') {
+                    infoKlienHtml = `<div class="small text-muted">👤 ${doc.nama_klien || '-'}<br>💰 ${doc.nilai_proyek || '-'}</div>`;
+                }
+
                 tbody.innerHTML += `<tr>
-                <td class="fw-bold text-primary">${doc.no_dokumen}</td><td>${doc.nama_dokumen}</td><td>${doc.tahun}</td>
+                <td class="fw-bold text-primary">${doc.no_dokumen}</td><td>${doc.nama_dokumen}</td><td>${infoKlienHtml || '-'}</td><td>${doc.tahun}</td>
                 <td><span class="badge bg-secondary">${doc.jenis_dokumen}</span></td>
                 <td><span class="badge ${sb}">${doc.status}</span></td>
+                <td><span class="text-muted small">${doc.tempat_penyimpanan || '-'}</span></td>
                 <td class="text-center"><div class="d-flex justify-content-center gap-1 flex-wrap">
-                    <button type="button" class="btn btn-sm btn-outline-info ${hasFile ? '' : 'disabled'}" data-action="preview" data-idx="${idx}" ${hasFile ? '' : 'title="Belum ada file"'}>👁️</button>
-                    <button type="button" class="btn btn-sm btn-outline-success ${hasFile ? '' : 'disabled'}" data-action="download" data-idx="${idx}" ${hasFile ? '' : 'title="Belum ada file"'}>⬇️</button>
-                    <button type="button" class="btn btn-sm btn-outline-warning" data-action="edit" data-idx="${idx}">✏️</button>
-                    <button type="button" class="btn btn-sm btn-outline-danger ${doc.status === 'Dipinjam' ? 'disabled' : ''}" data-action="delete" data-idx="${idx}" ${doc.status === 'Dipinjam' ? 'title="Tidak bisa hapus, sedang dipinjam"' : ''}>🗑️</button>
+                    <button type="button" class="btn btn-sm btn-outline-info ${hasFile ? '' : 'disabled'}" data-action="preview" data-idx="${originalIdx}" ${hasFile ? '' : 'title="Belum ada file"'}>👁️</button>
+                    <button type="button" class="btn btn-sm btn-outline-success ${hasFile ? '' : 'disabled'}" data-action="download" data-idx="${originalIdx}" ${hasFile ? '' : 'title="Belum ada file"'}>⬇️</button>
+                    <button type="button" class="btn btn-sm btn-outline-warning" data-action="edit" data-idx="${originalIdx}">✏️</button>
+                    <button type="button" class="btn btn-sm btn-outline-danger ${doc.status === 'Dipinjam' ? 'disabled' : ''}" data-action="delete" data-idx="${originalIdx}" ${doc.status === 'Dipinjam' ? 'title="Tidak bisa hapus, sedang dipinjam"' : ''}>🗑️</button>
                 </div></td></tr>`;
             });
 
@@ -1306,21 +1484,71 @@
         }
 
         function editDokumen(doc) {
-            const nama = prompt('Nama / Judul Dokumen:', doc.nama_dokumen);
-            if (nama === null) return;
-            const tahun = prompt('Tahun:', doc.tahun);
-            if (tahun === null) return;
-            const jenis = prompt('Jenis Dokumen (SOP/SK/Surat/Kontrak/Laporan/Lainnya):', doc.jenis_dokumen);
-            if (jenis === null) return;
-            fetch(API + '/api/dokumen/' + encodeURIComponent(doc.no_dokumen), {
-                method: 'PATCH',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ nama_dokumen: nama, tahun: tahun, jenis_dokumen: jenis })
-            }).then(r => r.json()).then(data => {
+            document.getElementById('editOldNoDokumen').value = doc.no_dokumen;
+            document.getElementById('editNoDokumen').value = doc.no_dokumen;
+            document.getElementById('editNamaDokumen').value = doc.nama_dokumen;
+            document.getElementById('editTahun').value = doc.tahun;
+            
+            // Set Jenis and Status safely
+            const jenisOpt = Array.from(document.getElementById('editJenis').options).map(o => o.value);
+            document.getElementById('editJenis').value = jenisOpt.includes(doc.jenis_dokumen) ? doc.jenis_dokumen : 'Lainnya';
+            document.getElementById('editStatus').value = doc.status;
+            
+            document.getElementById('editNamaKlien').value = doc.nama_klien || '';
+            document.getElementById('editNilaiProyek').value = doc.nilai_proyek || '';
+            toggleEditKontrakFields();
+            
+            document.getElementById('editTempatPenyimpanan').value = doc.tempat_penyimpanan || '';
+            
+            if (!isAdminLoggedIn) {
+                document.getElementById('editTempatPenyimpanan').disabled = true;
+                document.getElementById('infoTempatPenyimpanan').style.display = 'inline';
+            } else {
+                document.getElementById('editTempatPenyimpanan').disabled = false;
+                document.getElementById('infoTempatPenyimpanan').style.display = 'none';
+            }
+            
+            new bootstrap.Modal(document.getElementById('modalEditDokumen')).show();
+        }
+
+        async function submitEditDokumen(event) {
+            event.preventDefault();
+            const oldNo = document.getElementById('editOldNoDokumen').value;
+            const body = {
+                no_dokumen_baru: document.getElementById('editNoDokumen').value,
+                nama_dokumen: document.getElementById('editNamaDokumen').value,
+                tahun: document.getElementById('editTahun').value,
+                jenis_dokumen: document.getElementById('editJenis').value,
+                status: document.getElementById('editStatus').value,
+                nama_klien: document.getElementById('editNamaKlien').value,
+                nilai_proyek: document.getElementById('editNilaiProyek').value
+            };
+            if (isAdminLoggedIn) {
+                body.tempat_penyimpanan = document.getElementById('editTempatPenyimpanan').value;
+            }
+            
+            const btn = event.target.querySelector('button[type="submit"]');
+            const origText = btn.innerText;
+            btn.innerText = "Menyimpan...";
+            btn.disabled = true;
+            
+            try {
+                const res = await fetch(API + '/api/dokumen/' + encodeURIComponent(oldNo), {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
                 if (data.error) throw new Error(data.error);
+                bootstrap.Modal.getInstance(document.getElementById('modalEditDokumen')).hide();
                 alert('✅ Dokumen berhasil diperbarui!');
                 loadDatabase();
-            }).catch(e => alert('❌ Gagal: ' + e.message));
+            } catch (e) {
+                alert('❌ Gagal: ' + e.message);
+            } finally {
+                btn.innerText = origText;
+                btn.disabled = false;
+            }
         }
 
         async function hapusDokumen(noDoc, namaDoc) {
@@ -1343,18 +1571,36 @@
         }
 
 
+        let cachedTransaksi = [];
+
         async function updateDatalists() {
             try {
                 cachedDokumen = await fetch(API + '/api/dokumen').then(r => r.json());
-                const listTersedia = document.getElementById('listDokumenTersedia');
-                const listDipinjam = document.getElementById('listDokumenDipinjam');
-                listTersedia.innerHTML = ''; listDipinjam.innerHTML = '';
-                cachedDokumen.forEach(doc => {
-                    const opt = document.createElement('option');
-                    opt.value = `${doc.no_dokumen} - ${doc.nama_dokumen}`;
-                    if (doc.status === 'Tersedia') listTersedia.appendChild(opt);
-                    if (doc.status === 'Dipinjam') listDipinjam.appendChild(opt.cloneNode(true));
-                });
+
+                // Fetch active transactions for pengembalian search
+                try {
+                    cachedTransaksi = await fetch(API + '/api/transaksi').then(r => r.json());
+                } catch(e) { cachedTransaksi = []; }
+
+                // Populate datalist with unique borrower names (with email)
+                const listPeminjam = document.getElementById('listPeminjamAktif');
+                if (listPeminjam) {
+                    listPeminjam.innerHTML = '';
+                    const seen = new Set();
+                    cachedTransaksi.forEach(trx => {
+                        if (trx.status_keseluruhan !== 'Selesai') {
+                            const key = trx.email_peminjam || trx.nama_peminjam;
+                            if (!seen.has(key)) {
+                                seen.add(key);
+                                const opt = document.createElement('option');
+                                opt.value = `${trx.nama_peminjam} (${trx.email_peminjam || '-'})`;
+                                listPeminjam.appendChild(opt);
+                            }
+                        }
+                    });
+                }
+
+                renderKatalogPinjam();
             } catch (e) { console.error('Datalist error:', e); }
         }
 
@@ -1719,19 +1965,34 @@
                 } else if (type === 'pengembalian') {
                     const checks = document.querySelectorAll('.check-kembali:checked');
                     if (checks.length === 0) { btn.innerText = origText; btn.disabled = false; return alert("Centang minimal satu dokumen!"); }
-                    const dokumen_kembali = []; checks.forEach(c => dokumen_kembali.push(c.value));
-                    const trxId = checks[0].dataset.trx;
-                    const body = {
-                        id_transaksi: trxId, dokumen_kembali,
-                        nama_pengembali: event.target.querySelector('input[type="text"]:not([readonly]):not([id])').value || 'n/a'
-                    };
-                    const res = await fetch(API + '/api/pengembalian', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-                    const data = await res.json();
-                    if (data.error) throw new Error(data.error);
+
+                    // Group checked documents by their transaction ID
+                    const grouped = {};
+                    checks.forEach(c => {
+                        const trx = c.dataset.trx;
+                        if (!grouped[trx]) grouped[trx] = [];
+                        grouped[trx].push(c.value);
+                    });
+
+                    const namaPengembali = event.target.querySelector('input[type="text"]:not([readonly]):not([id])');
+                    const nama = namaPengembali ? namaPengembali.value || 'n/a' : 'n/a';
+
+                    // Send one request per transaction
+                    let successCount = 0;
+                    for (const [trxId, dokList] of Object.entries(grouped)) {
+                        const body = { id_transaksi: trxId, dokumen_kembali: dokList, nama_pengembali: nama };
+                        const res = await fetch(API + '/api/pengembalian', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+                        const data = await res.json();
+                        if (data.error) throw new Error(data.error);
+                        successCount++;
+                    }
+
                     document.getElementById('inputSearchTrx').value = '';
-                    document.getElementById('tabelDokumenKembali').innerHTML = '<tr><td colspan="4" class="text-center text-muted">Silakan cari dokumen di atas</td></tr>';
+                    document.getElementById('tabelDokumenKembali').innerHTML = '<tr><td colspan="4" class="text-center text-muted">Silakan cari peminjam di atas</td></tr>';
+                    const infoFields = document.querySelectorAll('#view-pengembalian .form-control[readonly]');
+                    infoFields.forEach(f => f.value = '');
                     btn.innerText = origText; btn.disabled = false;
-                    alert("✅ Permintaan pengembalian berhasil dikirim!\n\nMenunggu persetujuan Admin.");
+                    alert(`✅ Permintaan pengembalian berhasil dikirim (${checks.length} dokumen dari ${successCount} transaksi)!\n\nMenunggu persetujuan Admin.`);
                     switchTab('dashboard');
 
                 } else if (type === 'penyerahan') {
@@ -1742,7 +2003,10 @@
                     rows.forEach(r => {
                         const c = r.querySelectorAll('td');
                         if (c.length >= 4) {
-                            dokumen.push({ no: c[0].innerText, nama: c[1].innerText, tahun: c[2].innerText, jenis: c[3].innerText });
+                            const namaKlien = r.dataset.namaKlien || '';
+                            const nilaiProyek = r.dataset.nilaiProyek || '';
+                            const namaDocText = c[1].childNodes[0].textContent.trim();
+                            dokumen.push({ no: c[0].innerText, nama: namaDocText, tahun: c[2].innerText, jenis: c[3].innerText, nama_klien: namaKlien, nilai_proyek: nilaiProyek });
                             const fileInput = r.querySelector('input[type="file"]');
                             fileInputs.push(fileInput && fileInput.files[0] ? { no: c[0].innerText, file: fileInput.files[0] } : null);
                         }
@@ -1780,51 +2044,260 @@
         // FUNGSI DOKUMEN (Tambah, Cari)
         // =============================================
 
-        function tambahDokumen() {
-            const inputVal = document.getElementById('inputDokumen').value;
-            if (!inputVal) return alert("Pilih atau ketik dokumen terlebih dahulu!");
-            const noDoc = inputVal.split(' - ')[0].trim();
+        function renderKatalogPinjam() {
+            const tbody = document.querySelector('#tabelKatalogPinjam tbody');
+            if(!tbody) return;
+            
+            const fFilter = (document.getElementById('filterKatalogPinjam') ? document.getElementById('filterKatalogPinjam').value.toLowerCase() : '');
+            const fJenis = (document.getElementById('filterKatalogJenis') ? document.getElementById('filterKatalogJenis').value : '');
+
+            const availableDocs = cachedDokumen.filter(d => d.status === 'Tersedia');
+            const filteredDocs = availableDocs.filter(doc => {
+                if (fFilter && !doc.no_dokumen.toLowerCase().includes(fFilter) && !doc.nama_dokumen.toLowerCase().includes(fFilter)) return false;
+                if (fJenis && doc.jenis_dokumen !== fJenis) return false;
+                return true;
+            });
+
+            if (filteredDocs.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">Tidak ada dokumen tersedia yang sesuai pencarian.</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = '';
+            filteredDocs.forEach(doc => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="fw-bold text-primary">${doc.no_dokumen}</td>
+                    <td>${doc.nama_dokumen}</td>
+                    <td><span class="badge bg-secondary">${doc.jenis_dokumen}</span></td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-primary fw-bold px-3 shadow-sm" onclick="pilihDokumenPinjam('${doc.no_dokumen}')">+ Pinjam</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function pilihDokumenPinjam(noDoc) {
             const doc = cachedDokumen.find(d => d.no_dokumen === noDoc && d.status === 'Tersedia');
             if (!doc) return alert("Dokumen tidak ditemukan atau sedang dipinjam!");
+            
             const tbody = document.querySelector('#tabelDokumen tbody');
-            for (let td of tbody.querySelectorAll('tr td:first-child')) { if (td.textContent === doc.no_dokumen) return alert("Dokumen sudah di keranjang!"); }
-            const emptyRow = document.getElementById('emptyRow'); if (emptyRow) emptyRow.remove();
+            for (let td of tbody.querySelectorAll('tr td:first-child')) { 
+                if (td.textContent === doc.no_dokumen) return alert("Dokumen ini sudah ada di keranjang Anda!"); 
+            }
+            
+            const emptyRow = document.getElementById('emptyRow'); 
+            if (emptyRow) emptyRow.remove();
+            
             const tr = document.createElement('tr');
-            tr.innerHTML = `<td class="fw-bold">${doc.no_dokumen}</td><td>${doc.nama_dokumen}</td><td class="text-center"><button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()">Hapus</button></td>`;
+            tr.innerHTML = `
+                <td class="fw-bold">${doc.no_dokumen}</td>
+                <td>${doc.nama_dokumen}</td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-sm btn-outline-danger shadow-sm" onclick="this.closest('tr').remove(); if(document.querySelectorAll('#tabelDokumen tbody tr').length === 0) { document.querySelector('#tabelDokumen tbody').innerHTML = '<tr id=\\'emptyRow\\'><td colspan=\\'3\\' class=\\'text-center text-muted\\'>Keranjang masih kosong. Silakan klik \\'+ Pinjam\\' pada katalog di atas.</td></tr>'; }">Hapus</button>
+                </td>`;
             tbody.appendChild(tr);
-            document.getElementById('inputDokumen').value = '';
+        }
+
+        async function importTempatPenyimpanan(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            if (!isAdminLoggedIn) { alert('Hanya Admin yang dapat mengimpor data.'); event.target.value = ''; return; }
+
+            const confirmMsg = `Anda akan mengimpor file "${file.name}" untuk memperbarui Tempat Penyimpanan.\n\nSistem akan mencocokkan berdasarkan kolom "No Dokumen" dan memperbarui kolom "Tempat Penyimpanan".\n\nLanjutkan?`;
+            if (!confirm(confirmMsg)) { event.target.value = ''; return; }
+
+            try {
+                const fd = new FormData();
+                fd.append('file', file);
+                const res = await fetch(API + '/api/dokumen/import-tempat', { method: 'POST', body: fd });
+                const data = await res.json();
+                if (data.error) throw new Error(data.error);
+
+                let msg = `✅ Import selesai!\n\n📝 ${data.updated} dokumen berhasil diperbarui.`;
+                if (data.notFound > 0) msg += `\n⚠️ ${data.notFound} baris tidak ditemukan No Dokumen-nya di database.`;
+                alert(msg);
+                loadDatabase();
+            } catch (e) {
+                alert('❌ Gagal import: ' + e.message);
+            }
+            event.target.value = '';
         }
 
         async function cariDokumenPengembalian() {
-            const val = document.getElementById('inputSearchTrx').value;
-            if (!val) return alert("Ketik ID Transaksi atau No Dokumen!");
+            const val = document.getElementById('inputSearchTrx').value.trim();
+            if (!val) return alert("Ketik Nama atau Email Peminjam!");
             const tbody = document.getElementById('tabelDokumenKembali');
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">⏳ Mencari data...</td></tr>';
+
             try {
-                let trxId = val.split(' - ')[0].trim();
-                const res = await fetch(API + '/api/transaksi/' + trxId);
-                if (res.ok) {
-                    const data = await res.json();
-                    if (data.status_approval !== 'Disetujui') {
-                        tbody.innerHTML = '<tr><td colspan="4" class="text-center text-warning py-3">Transaksi ini belum disetujui oleh Admin.</td></tr>';
-                        return;
-                    }
-                    const dipinjam = data.details.filter(d => d.status_dokumen === 'Dipinjam');
-                    if (dipinjam.length === 0) { tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted">Semua dokumen sudah dikembalikan.</td></tr>'; return; }
-                    const infoFields = document.querySelectorAll('#view-pengembalian .form-control[readonly]');
-                    if (infoFields[0]) infoFields[0].value = formatTgl(data.tgl_pinjam);
-                    if (infoFields[1]) infoFields[1].value = data.nama_peminjam;
-                    if (infoFields[2]) infoFields[2].value = data.nama_divisi;
-                    if (infoFields[3]) infoFields[3].value = todayFormatted();
-                    const namaPengembali = document.querySelector('#view-pengembalian input[type="text"]:not([readonly]):not([id])');
-                    if (namaPengembali) namaPengembali.value = data.nama_peminjam;
-                    tbody.innerHTML = dipinjam.map(d => `<tr>
-                    <td class="text-center align-middle"><input class="form-check-input check-kembali" type="checkbox" value="${d.no_dokumen}" data-trx="${data.id_transaksi}" style="transform:scale(1.5);" checked></td>
-                    <td class="fw-bold">${d.no_dokumen}</td><td>${d.nama_dokumen}</td>
-                    <td><span class="badge bg-warning text-dark">Dipinjam</span></td></tr>`).join('');
-                } else {
-                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-3"><i class="fw-bold">Transaksi tidak ditemukan.</i></td></tr>';
+                // Extract email from format "Nama (email)" or treat as plain search
+                let searchName = val;
+                let searchEmail = '';
+                const emailMatch = val.match(/\(([^)]+)\)/);
+                if (emailMatch) {
+                    searchEmail = emailMatch[1].trim();
+                    searchName = val.replace(/\s*\([^)]*\)/, '').trim();
                 }
+
+                // Find all active transactions matching this borrower
+                const matchingTrx = cachedTransaksi.filter(trx => {
+                    if (trx.status_keseluruhan === 'Selesai') return false;
+                    const nameMatch = trx.nama_peminjam.toLowerCase().includes(searchName.toLowerCase());
+                    const emailMatchTrx = searchEmail ? (trx.email_peminjam || '').toLowerCase() === searchEmail.toLowerCase() : false;
+                    return searchEmail ? emailMatchTrx : nameMatch;
+                });
+
+                if (matchingTrx.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-danger py-3"><i class="fw-bold">Peminjam tidak ditemukan atau tidak memiliki pinjaman aktif.</i></td></tr>';
+                    return;
+                }
+
+                // Fetch details for each matching transaction
+                let allDipinjam = [];
+                let firstTrx = null;
+                for (const trx of matchingTrx) {
+                    try {
+                        const res = await fetch(API + '/api/transaksi/' + trx.id_transaksi);
+                        if (!res.ok) continue;
+                        const data = await res.json();
+                        if (!firstTrx) firstTrx = data;
+                        const dipinjam = data.details.filter(d => d.status_dokumen === 'Dipinjam');
+                        dipinjam.forEach(d => {
+                            allDipinjam.push({ ...d, id_transaksi: trx.id_transaksi, tgl_pinjam: trx.tgl_pinjam });
+                        });
+                    } catch(e) { console.warn('Error fetching trx', trx.id_transaksi, e); }
+                }
+
+                if (allDipinjam.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="4" class="text-center text-muted py-3">Semua dokumen peminjam ini sudah dikembalikan.</td></tr>';
+                    return;
+                }
+
+                // Fill info fields
+                const infoFields = document.querySelectorAll('#view-pengembalian .form-control[readonly]');
+                if (infoFields[0]) infoFields[0].value = matchingTrx.length > 1 ? `${matchingTrx.length} transaksi aktif` : formatTgl(firstTrx.tgl_pinjam);
+                if (infoFields[1]) infoFields[1].value = firstTrx.nama_peminjam;
+                if (infoFields[2]) infoFields[2].value = firstTrx.nama_divisi;
+                if (infoFields[3]) infoFields[3].value = todayFormatted();
+                const namaPengembali = document.querySelector('#view-pengembalian input[type="text"]:not([readonly]):not([id])');
+                if (namaPengembali) namaPengembali.value = firstTrx.nama_peminjam;
+
+                // Render all borrowed documents
+                tbody.innerHTML = allDipinjam.map(d => `<tr>
+                    <td class="text-center align-middle"><input class="form-check-input check-kembali" type="checkbox" value="${d.no_dokumen}" data-trx="${d.id_transaksi}" style="transform:scale(1.5);" checked></td>
+                    <td class="fw-bold">${d.no_dokumen}</td><td>${d.nama_dokumen}</td>
+                    <td><span class="badge bg-warning text-dark">Dipinjam</span> <small class="text-muted">${d.id_transaksi}</small></td></tr>`).join('');
+
             } catch (e) { tbody.innerHTML = `<tr><td colspan="4" class="text-center text-danger py-3">${e.message}</td></tr>`; }
+        }
+
+        function toggleKontrakFields() {
+            const jenis = document.getElementById('inputJenisDokumenPeny').value;
+            const row = document.getElementById('rowKontrakPeny');
+            if (jenis === 'Kontrak') {
+                row.classList.remove('d-none');
+            } else {
+                row.classList.add('d-none');
+            }
+        }
+
+        function toggleEditKontrakFields() {
+            const jenis = document.getElementById('editJenis').value;
+            const row = document.getElementById('rowEditKontrak');
+            if (jenis === 'Kontrak') {
+                row.classList.remove('d-none');
+            } else {
+                row.classList.add('d-none');
+            }
+        }
+
+        function addDokumenPenyerahanToTable(noDoc, namaDoc, tahunDoc, jenisDoc, namaKlien = '', nilaiProyek = '') {
+            const tbody = document.querySelector('#tabelDokumenPenyerahan tbody');
+            const emptyRow = document.getElementById('emptyRowPenyerahan'); if (emptyRow) emptyRow.remove();
+            
+            // Check if exist
+            for (let td of tbody.querySelectorAll('tr td:first-child')) {
+                if (td.textContent === noDoc) {
+                    console.warn("Dokumen " + noDoc + " sudah ada di keranjang");
+                    return false;
+                }
+            }
+
+            const tr = document.createElement('tr');
+            tr.dataset.namaKlien = namaKlien;
+            tr.dataset.nilaiProyek = nilaiProyek;
+            
+            let infoKlienHtml = '';
+            if (jenisDoc === 'Kontrak') {
+                infoKlienHtml = `<div class="small text-muted mt-1">👤 ${namaKlien || '-'}<br>💰 ${nilaiProyek || '-'}</div>`;
+            }
+
+            tr.innerHTML = `<td class="fw-bold">${noDoc}</td><td>${namaDoc}${infoKlienHtml}</td><td>${tahunDoc}</td><td><span class="badge bg-secondary">${jenisDoc}</span></td>
+            <td class="text-center"><div class="d-flex justify-content-center gap-1">
+                <label class="btn btn-sm btn-outline-primary mb-0" style="cursor:pointer;"><input type="file" class="d-none" accept=".pdf,.doc,.docx,.xls,.xlsx" onchange="if(this.files[0]){this.nextElementSibling.textContent='✓ Terlampir';this.parentElement.classList.replace('btn-outline-primary','btn-success');}"><span>📎 Attach</span></label>
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()">Hapus</button>
+            </div></td>`;
+            tbody.appendChild(tr);
+            return true;
+        }
+
+        function importExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array'});
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet, {header: 1});
+
+                    if (json.length < 2) return alert("File Excel kosong atau tidak sesuai format.");
+                    
+                    const headers = json[0].map(h => (h || '').toString().toLowerCase().trim());
+                    const noIdx = headers.findIndex(h => h.includes('no') || h.includes('nomor'));
+                    const namaIdx = headers.findIndex(h => h.includes('nama') || h.includes('judul'));
+                    const tahunIdx = headers.findIndex(h => h.includes('tahun'));
+                    const jenisIdx = headers.findIndex(h => h.includes('jenis'));
+
+                    let addedCount = 0;
+                    for (let i = 1; i < json.length; i++) {
+                        const row = json[i];
+                        if (!row || row.length === 0) continue;
+                        
+                        // Default column mapping if header not exactly matched
+                        const no = (row[noIdx !== -1 ? noIdx : 0] || '').toString().trim();
+                        const nama = (row[namaIdx !== -1 ? namaIdx : 1] || '').toString().trim();
+                        const tahun = (row[tahunIdx !== -1 ? tahunIdx : 2] || new Date().getFullYear()).toString().trim();
+                        const jenisRaw = (row[jenisIdx !== -1 ? jenisIdx : 3] || 'Lainnya').toString().trim();
+                        
+                        // normalize jenis to match options
+                        const jenisArr = ['SOP', 'Blueprint', 'Laporan', 'Kontrak', 'Sertifikat', 'BAST'];
+                        const jenis = jenisArr.find(j => j.toLowerCase() === jenisRaw.toLowerCase()) || 'Lainnya';
+                        
+                        const klienIdx = headers.findIndex(h => h.includes('klien'));
+                        const nilaiIdx = headers.findIndex(h => h.includes('nilai'));
+                        
+                        const klien = klienIdx !== -1 ? (row[klienIdx] || '').toString().trim() : '';
+                        const nilai = nilaiIdx !== -1 ? (row[nilaiIdx] || '').toString().trim() : '';
+
+                        if (no && nama) {
+                            if(addDokumenPenyerahanToTable(no, nama, tahun, jenis, klien, nilai)) {
+                                addedCount++;
+                            }
+                        }
+                    }
+                    alert(`✅ Berhasil mengimport ${addedCount} dokumen dari Excel!\nSilakan klik '📎 Attach' untuk melampirkan file pada masing-masing dokumen.`);
+                } catch (err) {
+                    alert('Gagal membaca file Excel: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+            event.target.value = ''; // Reset
         }
 
         function tambahDokumenPenyerahan() {
@@ -1832,18 +2305,20 @@
             const namaDoc = document.getElementById('inputNamaDokumenPeny').value.trim();
             const tahunDoc = document.getElementById('inputTahunDokumenPeny').value.trim();
             const jenisDoc = document.getElementById('inputJenisDokumenPeny').value;
-            if (!noDoc || !namaDoc || !tahunDoc || !jenisDoc) return alert("Silakan lengkapi semua isian!");
-            const tbody = document.querySelector('#tabelDokumenPenyerahan tbody');
-            const emptyRow = document.getElementById('emptyRowPenyerahan'); if (emptyRow) emptyRow.remove();
-            const tr = document.createElement('tr');
-            tr.innerHTML = `<td class="fw-bold">${noDoc}</td><td>${namaDoc}</td><td>${tahunDoc}</td><td><span class="badge bg-secondary">${jenisDoc}</span></td>
-            <td class="text-center"><div class="d-flex justify-content-center gap-1">
-                <label class="btn btn-sm btn-outline-primary mb-0" style="cursor:pointer;"><input type="file" class="d-none" accept=".pdf" onchange="if(this.files[0]){this.nextElementSibling.textContent='✓ Terlampir';this.parentElement.classList.replace('btn-outline-primary','btn-success');}"><span>📎 Attach</span></label>
-                <button type="button" class="btn btn-sm btn-outline-danger" onclick="this.closest('tr').remove()">Hapus</button>
-            </div></td>`;
-            tbody.appendChild(tr);
-            document.getElementById('inputNoDokumenPeny').value = ''; document.getElementById('inputNamaDokumenPeny').value = '';
-            document.getElementById('inputTahunDokumenPeny').value = ''; document.getElementById('inputJenisDokumenPeny').value = '';
+            const namaKlien = document.getElementById('inputNamaKlienPeny').value.trim();
+            const nilaiProyek = document.getElementById('inputNilaiProyekPeny').value.trim();
+
+            if (!noDoc || !namaDoc || !tahunDoc || !jenisDoc) return alert("Silakan lengkapi semua isian utama!");
+            if (jenisDoc === 'Kontrak' && (!namaKlien || !nilaiProyek)) return alert("Silakan lengkapi Nama Klien dan Nilai Proyek untuk dokumen Kontrak!");
+            
+            const success = addDokumenPenyerahanToTable(noDoc, namaDoc, tahunDoc, jenisDoc, namaKlien, nilaiProyek);
+            
+            if (success) {
+                document.getElementById('inputNoDokumenPeny').value = ''; document.getElementById('inputNamaDokumenPeny').value = '';
+                document.getElementById('inputTahunDokumenPeny').value = ''; document.getElementById('inputJenisDokumenPeny').value = '';
+                document.getElementById('inputNamaKlienPeny').value = ''; document.getElementById('inputNilaiProyekPeny').value = '';
+                toggleKontrakFields();
+            }
         }
 
         // --- Set tanggal otomatis ---

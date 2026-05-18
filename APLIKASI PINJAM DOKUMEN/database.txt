@@ -24,6 +24,9 @@ CREATE TABLE master_dokumen (
     tahun INTEGER NOT NULL,
     jenis_dokumen TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'Tersedia' CHECK(status IN ('Tersedia', 'Dipinjam', 'Hilang')),
+    tempat_penyimpanan TEXT,
+    nama_klien TEXT,
+    nilai_proyek TEXT,
     file_path TEXT
 );
 
@@ -116,6 +119,8 @@ CREATE TABLE detail_penyerahan (
     nama_dokumen TEXT NOT NULL,
     tahun INTEGER NOT NULL,
     jenis_dokumen TEXT NOT NULL,
+    nama_klien TEXT,
+    nilai_proyek TEXT,
     file_path TEXT,
 
     FOREIGN KEY (id_penyerahan) REFERENCES trx_penyerahan(id_penyerahan) ON DELETE CASCADE

@@ -4,6 +4,7 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 const multer = require('multer');
+const ExcelJS = require('exceljs');
 const db = require('./database');
 
 const app = express();
@@ -18,8 +19,12 @@ const storage = multer.diskStorage({
     destination: (req, file, cb) => cb(null, UPLOADS_DIR),
     filename: (req, file, cb) => {
         const ext = path.extname(file.originalname);
-        const safeName = req.params.no_dokumen.replace(/[^a-zA-Z0-9-_]/g, '_') + ext;
-        cb(null, safeName);
+        if (req.params.no_dokumen) {
+            const safeName = req.params.no_dokumen.replace(/[^a-zA-Z0-9-_]/g, '_') + ext;
+            cb(null, safeName);
+        } else {
+            cb(null, 'temp_import_' + Date.now() + ext);
+        }
     }
 });
 const upload = multer({ storage, limits: { fileSize: 50 * 1024 * 1024 } });
@@ -340,15 +345,15 @@ app.post('/api/penyerahan', (req, res) => {
         `);
 
         const insertDetail = db.prepare(`
-            INSERT INTO detail_penyerahan (id_penyerahan, no_dokumen, nama_dokumen, tahun, jenis_dokumen, file_path)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO detail_penyerahan (id_penyerahan, no_dokumen, nama_dokumen, tahun, jenis_dokumen, file_path, nama_klien, nilai_proyek)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `);
 
         const transaction = db.transaction(() => {
             insertPenyerahan.run(id_penyerahan, tgl_penyerahan, nama_penyerah, id_divisi);
 
             for (const doc of dokumen) {
-                insertDetail.run(id_penyerahan, doc.no, doc.nama, doc.tahun, doc.jenis, doc.file_path || null);
+                insertDetail.run(id_penyerahan, doc.no, doc.nama, doc.tahun, doc.jenis, doc.file_path || null, doc.nama_klien || null, doc.nilai_proyek || null);
             }
         });
 
@@ -529,8 +534,8 @@ app.post('/api/approve', (req, res) => {
                         db.prepare('UPDATE master_dokumen SET file_path = ? WHERE no_dokumen = ?').run(filePath, doc.no_dokumen);
                     }
                 } else {
-                    db.prepare(`INSERT INTO master_dokumen (no_dokumen, nama_dokumen, tahun, jenis_dokumen, status, file_path) VALUES (?, ?, ?, ?, 'Tersedia', ?)`)
-                        .run(doc.no_dokumen, doc.nama_dokumen, doc.tahun, doc.jenis_dokumen, filePath);
+                    db.prepare(`INSERT INTO master_dokumen (no_dokumen, nama_dokumen, tahun, jenis_dokumen, status, file_path, nama_klien, nilai_proyek) VALUES (?, ?, ?, ?, 'Tersedia', ?, ?, ?)`)
+                        .run(doc.no_dokumen, doc.nama_dokumen, doc.tahun, doc.jenis_dokumen, filePath, doc.nama_klien || null, doc.nilai_proyek || null);
                 }
             }
         } else {
@@ -582,6 +587,166 @@ app.get('/api/dokumen', (req, res) => {
         const docs = db.prepare('SELECT * FROM master_dokumen ORDER BY no_dokumen').all();
         res.json(docs);
     } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Download Template Excel
+app.get('/api/dokumen/template', async (req, res) => {
+    try {
+        const workbook = new ExcelJS.Workbook();
+        const sheet = workbook.addWorksheet('Template Dokumen Baru');
+        
+        sheet.columns = [
+            { header: 'No Dokumen', key: 'no_dokumen', width: 25 },
+            { header: 'Nama Dokumen', key: 'nama_dokumen', width: 40 },
+            { header: 'Tahun', key: 'tahun', width: 15 },
+            { header: 'Jenis Dokumen', key: 'jenis_dokumen', width: 20 },
+            { header: 'Nama Klien (Khusus Kontrak)', key: 'nama_klien', width: 30 },
+            { header: 'Nilai Proyek (Khusus Kontrak)', key: 'nilai_proyek', width: 25 }
+        ];
+
+        // Styling headers
+        sheet.getRow(1).font = { bold: true };
+        sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD3D3D3' } };
+
+        // Add dummy data / instructions
+        sheet.addRow({
+            no_dokumen: 'DOC-2026-001',
+            nama_dokumen: 'SOP Keuangan',
+            tahun: 2026,
+            jenis_dokumen: 'SOP',
+            nama_klien: '',
+            nilai_proyek: ''
+        });
+        sheet.addRow({
+            no_dokumen: 'DOC-2026-002',
+            nama_dokumen: 'Perjanjian Kerjasama Vendor',
+            tahun: 2025,
+            jenis_dokumen: 'Kontrak',
+            nama_klien: 'PT Maju Bersama',
+            nilai_proyek: 'Rp 500.000.000'
+        });
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename="Template_Import_Dokumen.xlsx"');
+
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Export to Excel
+app.get('/api/dokumen/export', async (req, res) => {
+    try {
+        const docs = db.prepare('SELECT * FROM master_dokumen ORDER BY no_dokumen').all();
+        const workbook = new ExcelJS.Workbook();
+        const sheet = workbook.addWorksheet('Database Dokumen');
+        
+        sheet.columns = [
+            { header: 'No Dokumen', key: 'no_dokumen', width: 20 },
+            { header: 'Nama / Judul Dokumen', key: 'nama_dokumen', width: 40 },
+            { header: 'Tahun', key: 'tahun', width: 10 },
+            { header: 'Jenis', key: 'jenis_dokumen', width: 15 },
+            { header: 'Status', key: 'status', width: 15 },
+            { header: 'Tempat Penyimpanan', key: 'tempat_penyimpanan', width: 25 },
+            { header: 'Nama Klien', key: 'nama_klien', width: 30 },
+            { header: 'Nilai Proyek', key: 'nilai_proyek', width: 25 },
+            { header: 'Link Download File', key: 'file_link', width: 40 }
+        ];
+
+        sheet.getRow(1).font = { bold: true };
+        sheet.getRow(1).fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FFD3D3D3' } };
+
+        const host = req.protocol + '://' + req.get('host');
+
+        docs.forEach(doc => {
+            const row = sheet.addRow({
+                no_dokumen: doc.no_dokumen,
+                nama_dokumen: doc.nama_dokumen,
+                tahun: doc.tahun,
+                jenis_dokumen: doc.jenis_dokumen,
+                status: doc.status,
+                tempat_penyimpanan: doc.tempat_penyimpanan || '-',
+                nama_klien: doc.nama_klien || '-',
+                nilai_proyek: doc.nilai_proyek || '-'
+            });
+
+            if (doc.file_path) {
+                const link = `${host}/api/dokumen/download/${encodeURIComponent(doc.no_dokumen)}`;
+                row.getCell('file_link').value = {
+                    text: 'Download Dokumen',
+                    hyperlink: link,
+                    tooltip: `Unduh file ${doc.file_path}`
+                };
+                row.getCell('file_link').font = { color: { argb: 'FF0563C1' }, underline: true };
+            } else {
+                row.getCell('file_link').value = 'Tidak ada file';
+            }
+        });
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        res.setHeader('Content-Disposition', 'attachment; filename="Database_Dokumen.xlsx"');
+
+        await workbook.xlsx.write(res);
+        res.end();
+    } catch (err) {
+        res.status(500).json({ error: err.message });
+    }
+});
+
+// Import tempat penyimpanan from Excel (admin only)
+app.post('/api/dokumen/import-tempat', upload.single('file'), async (req, res) => {
+    try {
+        if (!req.file) return res.status(400).json({ error: 'File tidak ditemukan' });
+
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(req.file.path);
+        const sheet = workbook.worksheets[0];
+        if (!sheet) return res.status(400).json({ error: 'Worksheet tidak ditemukan' });
+
+        // Read headers to find column indexes
+        const headerRow = sheet.getRow(1);
+        let noDocIdx = -1, tempatIdx = -1;
+        headerRow.eachCell((cell, colNumber) => {
+            const val = (cell.value || '').toString().toLowerCase().trim();
+            if (val.includes('no') && (val.includes('dokumen') || val.includes('doc'))) noDocIdx = colNumber;
+            if (val.includes('tempat') || val.includes('penyimpanan')) tempatIdx = colNumber;
+        });
+
+        if (noDocIdx === -1) return res.status(400).json({ error: 'Kolom "No Dokumen" tidak ditemukan di file Excel' });
+        if (tempatIdx === -1) return res.status(400).json({ error: 'Kolom "Tempat Penyimpanan" tidak ditemukan di file Excel' });
+
+        const updateStmt = db.prepare('UPDATE master_dokumen SET tempat_penyimpanan = ? WHERE no_dokumen = ?');
+        let updated = 0, notFound = 0;
+
+        const transaction = db.transaction(() => {
+            sheet.eachRow((row, rowNumber) => {
+                if (rowNumber === 1) return; // skip header
+                const noDoc = (row.getCell(noDocIdx).value || '').toString().trim();
+                const tempat = (row.getCell(tempatIdx).value || '').toString().trim();
+                if (!noDoc || !tempat) return;
+
+                const doc = db.prepare('SELECT no_dokumen FROM master_dokumen WHERE no_dokumen = ?').get(noDoc);
+                if (doc) {
+                    updateStmt.run(tempat, noDoc);
+                    updated++;
+                } else {
+                    notFound++;
+                }
+            });
+        });
+        transaction();
+
+        // Clean up uploaded file
+        fs.unlinkSync(req.file.path);
+
+        res.json({ success: true, updated, notFound });
+    } catch (err) {
+        // Clean up uploaded file on error
+        if (req.file && fs.existsSync(req.file.path)) fs.unlinkSync(req.file.path);
         res.status(500).json({ error: err.message });
     }
 });
@@ -642,12 +807,37 @@ app.get('/api/dokumen/download/:no_dokumen', (req, res) => {
 // Edit dokumen
 app.patch('/api/dokumen/:no_dokumen', (req, res) => {
     try {
-        const { nama_dokumen, tahun, jenis_dokumen } = req.body;
-        const doc = db.prepare('SELECT * FROM master_dokumen WHERE no_dokumen = ?').get(req.params.no_dokumen);
+        const { no_dokumen_baru, nama_dokumen, tahun, jenis_dokumen, status, tempat_penyimpanan, nama_klien, nilai_proyek } = req.body;
+        const oldNoDoc = req.params.no_dokumen;
+        const newNoDoc = no_dokumen_baru || oldNoDoc;
+
+        const doc = db.prepare('SELECT * FROM master_dokumen WHERE no_dokumen = ?').get(oldNoDoc);
         if (!doc) return res.status(404).json({ error: 'Dokumen tidak ditemukan' });
-        db.prepare('UPDATE master_dokumen SET nama_dokumen = ?, tahun = ?, jenis_dokumen = ? WHERE no_dokumen = ?')
-            .run(nama_dokumen || doc.nama_dokumen, tahun || doc.tahun, jenis_dokumen || doc.jenis_dokumen, req.params.no_dokumen);
-        res.json({ success: true });
+
+        if (newNoDoc !== oldNoDoc) {
+            // Check if new no_dokumen already exists
+            const existing = db.prepare('SELECT no_dokumen FROM master_dokumen WHERE no_dokumen = ?').get(newNoDoc);
+            if (existing) return res.status(400).json({ error: 'No dokumen baru sudah digunakan' });
+            
+            const transaction = db.transaction(() => {
+                // Insert as new row
+                db.prepare(`INSERT INTO master_dokumen (no_dokumen, nama_dokumen, tahun, jenis_dokumen, status, file_path, tempat_penyimpanan, nama_klien, nilai_proyek) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`)
+                    .run(newNoDoc, nama_dokumen || doc.nama_dokumen, tahun || doc.tahun, jenis_dokumen || doc.jenis_dokumen, status || doc.status, doc.file_path, tempat_penyimpanan !== undefined ? tempat_penyimpanan : doc.tempat_penyimpanan, nama_klien !== undefined ? nama_klien : doc.nama_klien, nilai_proyek !== undefined ? nilai_proyek : doc.nilai_proyek);
+                
+                // Update FK references
+                db.prepare('UPDATE detail_peminjaman SET no_dokumen = ? WHERE no_dokumen = ?').run(newNoDoc, oldNoDoc);
+                db.prepare('UPDATE detail_penyerahan SET no_dokumen = ? WHERE no_dokumen = ?').run(newNoDoc, oldNoDoc);
+                
+                // Delete old row
+                db.prepare('DELETE FROM master_dokumen WHERE no_dokumen = ?').run(oldNoDoc);
+            });
+            transaction();
+        } else {
+            db.prepare('UPDATE master_dokumen SET nama_dokumen = ?, tahun = ?, jenis_dokumen = ?, status = ?, tempat_penyimpanan = ?, nama_klien = ?, nilai_proyek = ? WHERE no_dokumen = ?')
+                .run(nama_dokumen || doc.nama_dokumen, tahun || doc.tahun, jenis_dokumen || doc.jenis_dokumen, status || doc.status, tempat_penyimpanan !== undefined ? tempat_penyimpanan : doc.tempat_penyimpanan, nama_klien !== undefined ? nama_klien : doc.nama_klien, nilai_proyek !== undefined ? nilai_proyek : doc.nilai_proyek, oldNoDoc);
+        }
+
+        res.json({ success: true, no_dokumen: newNoDoc });
     } catch (err) {
         res.status(500).json({ error: err.message });
     }

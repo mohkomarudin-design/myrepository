@@ -99,6 +99,11 @@ if (needInit) {
     migrate('trx_penyerahan', 'status_approval', "TEXT NOT NULL DEFAULT 'Disetujui'");
     migrate('trx_penyerahan', 'catatan_tolak', 'TEXT');
 
+    // master_dokumen migrations
+    migrate('master_dokumen', 'tempat_penyimpanan', 'TEXT');
+    migrate('master_dokumen', 'nama_klien', 'TEXT');
+    migrate('master_dokumen', 'nilai_proyek', 'TEXT');
+
     // Create admin_settings table if not exists
     try {
         db.exec(`CREATE TABLE IF NOT EXISTS admin_settings (
@@ -129,6 +134,9 @@ if (needInit) {
             file_path TEXT,
             FOREIGN KEY (id_penyerahan) REFERENCES trx_penyerahan(id_penyerahan) ON DELETE CASCADE
         )`);
+        
+        migrate('detail_penyerahan', 'nama_klien', 'TEXT');
+        migrate('detail_penyerahan', 'nilai_proyek', 'TEXT');
     } catch (e) {
         console.warn('  ⚠️ detail_penyerahan migration:', e.message);
     }

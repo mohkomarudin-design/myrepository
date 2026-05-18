@@ -228,7 +228,7 @@
                 </button>
             </div>
             <div class="mt-2 text-center pb-1">
-                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Secured by Gemini AI & SI-ONE</p>
+                <p class="text-[10px] text-slate-400 dark:text-slate-500 font-medium">Secured by Groq AI & SI-ONE</p>
             </div>
 
             <!-- Handle resize indicator -->
@@ -269,8 +269,8 @@ Panduan Komunikasi:
 - Referensi Perusahaan: Informasi lebih lanjut tentang profil perusahaan tersedia di https://www.ptsi.co.id/.
         `;
 
-        // Masukkan API Key Anda di sini
-        const apiKey = "AIzaSyBTbwOyZ1bZ3Obq7V_eksJo9Kn5zrnLIEY";
+        // Masukkan API Key Groq Anda di sini
+        const apiKey = "";
         // ======================================================================
 
         document.addEventListener('DOMContentLoaded', () => {
@@ -308,6 +308,8 @@ Panduan Komunikasi:
             // === AWAL PERCAKAPAN ===
             function initChat() {
                 chatHistory = []; // Reset memori AI
+                // Pre-load system prompt
+                chatHistory.push({ role: "system", content: AI_SYSTEM_PROMPT });
                 chatMessages.innerHTML = `
                     <div class="flex justify-center mb-4">
                         <span class="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider bg-white dark:bg-slate-800 px-3 py-1 rounded-full shadow-sm border border-slate-100 dark:border-slate-700">Hari ini</span>
@@ -442,7 +444,7 @@ Panduan Komunikasi:
                 if (loadingElement) loadingElement.remove();
             }
 
-            // === FUNGSI UTAMA AI GEMINI ===
+            // === FUNGSI UTAMA AI GROQ ===
             async function generateAIResponse(text, file) {
                 isGenerating = true;
                 btnSend.disabled = true;
@@ -451,50 +453,40 @@ Panduan Komunikasi:
                 showLoadingIndicator();
 
                 try {
-                    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-lite:generateContent?key=${apiKey}`;
+                    const url = 'https://api.groq.com/openai/v1/chat/completions';
 
-                    // Siapkan "Parts" untuk input pengguna
-                    let userParts = [];
-                    if (text) userParts.push({ text: text });
-
-                    // Jika ada gambar, konversi dan tambahkan ke parts
+                    // Groq menggunakan format text-only
+                    let userText = text || '';
                     if (file && file.type.startsWith('image/')) {
-                        const base64Data = await fileToBase64(file);
-                        userParts.push({
-                            inlineData: {
-                                mimeType: file.type,
-                                data: base64Data
-                            }
-                        });
-                        if (!text) userParts.push({ text: "Tolong jelaskan gambar ini secara detail." });
+                        userText = userText ? userText + '\n\n[Pengguna mengunggah gambar: ' + file.name + ']' : 'Pengguna mengunggah gambar: ' + file.name + '. Tolong jelaskan bahwa saat ini AI belum mendukung analisis gambar, dan arahkan pengguna untuk menghubungi tim support.';
                     }
 
-                    // Tambahkan ke History Obrolan
-                    chatHistory.push({ role: "user", parts: userParts });
-
-                    // Payload API
-                    const payload = {
-                        contents: chatHistory,
-                        systemInstruction: {
-                            parts: [{ text: AI_SYSTEM_PROMPT }] // <--- Menggunakan variabel dari atas
-                        }
-                    };
+                    // Tambahkan ke History Obrolan (format OpenAI)
+                    chatHistory.push({ role: "user", content: userText });
 
                     const options = {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(payload)
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + apiKey
+                        },
+                        body: JSON.stringify({
+                            model: 'llama-3.3-70b-versatile',
+                            messages: chatHistory,
+                            temperature: 0.7,
+                            max_tokens: 1024
+                        })
                     };
 
                     const result = await fetchWithBackoff(url, options);
 
                     let aiText = "Maaf, saya tidak dapat merespons saat ini. Coba lagi nanti.";
-                    if (result.candidates && result.candidates[0].content && result.candidates[0].content.parts) {
-                        aiText = result.candidates[0].content.parts[0].text;
+                    if (result.choices && result.choices[0] && result.choices[0].message) {
+                        aiText = result.choices[0].message.content;
                     }
 
                     // Simpan respons AI ke memori histori
-                    chatHistory.push({ role: "model", parts: [{ text: aiText }] });
+                    chatHistory.push({ role: "assistant", content: aiText });
 
                     hideLoadingIndicator();
                     appendAdminMessage(aiText);
