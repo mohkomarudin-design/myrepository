@@ -1,10 +1,16 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const db = require('./database');
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+// Serve static frontend file (pra-audit.html)
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../pra-audit.html'));
+});
 
 // API: Login
 app.post('/api/login', async (req, res) => {
