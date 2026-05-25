@@ -1,0 +1,156 @@
+-- =========================================================================
+-- DATABASE SCHEMA SIONE (Sistem Informasi Log Book Dokumen)
+-- RDBMS: MariaDB
+-- =========================================================================
+
+-- =========================================================================
+-- 1. TABEL MASTER DATA
+-- =========================================================================
+
+-- Tabel Master Divisi & Cabang
+CREATE TABLE IF NOT EXISTS master_divisi (
+    id_divisi INT AUTO_INCREMENT PRIMARY KEY,
+    kategori VARCHAR(50) NOT NULL,
+    nama_divisi VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- Tabel Master Dokumen (Database Utama)
+CREATE TABLE IF NOT EXISTS master_dokumen (
+    no_dokumen VARCHAR(100) PRIMARY KEY,
+    nama_dokumen VARCHAR(500) NOT NULL,
+    tahun INT NOT NULL,
+    jenis_dokumen VARCHAR(100) NOT NULL,
+    status VARCHAR(50) NOT NULL DEFAULT 'Tersedia',
+    tempat_penyimpanan TEXT,
+    nama_klien TEXT,
+    nilai_proyek TEXT,
+    file_path TEXT
+);
+
+-- Tabel Admin Settings (Password & Konfigurasi)
+CREATE TABLE IF NOT EXISTS admin_settings (
+    id INT PRIMARY KEY DEFAULT 1,
+    password_hash VARCHAR(500) NOT NULL,
+    reset_token VARCHAR(255),
+    reset_token_expiry VARCHAR(100)
+);
+
+-- =========================================================================
+-- 2. TABEL TRANSAKSI PEMINJAMAN
+-- =========================================================================
+
+-- Header Transaksi Peminjaman
+CREATE TABLE IF NOT EXISTS trx_peminjaman (
+    id_transaksi VARCHAR(100) PRIMARY KEY,
+    tgl_pinjam DATE NOT NULL,
+    batas_waktu DATE NOT NULL,
+    id_divisi INT NOT NULL,
+    nama_peminjam VARCHAR(255) NOT NULL,
+    email_peminjam VARCHAR(255),
+    file_lampiran TEXT,
+    ttd_peminjam TEXT,
+    ttd_pic TEXT,
+    status_keseluruhan VARCHAR(100) NOT NULL DEFAULT 'Menunggu Persetujuan',
+    status_approval VARCHAR(100) NOT NULL DEFAULT 'Menunggu',
+    catatan_tolak TEXT,
+    
+    FOREIGN KEY (id_divisi) REFERENCES master_divisi(id_divisi)
+);
+
+-- Detail Transaksi Peminjaman
+CREATE TABLE IF NOT EXISTS detail_peminjaman (
+    id_detail INT AUTO_INCREMENT PRIMARY KEY,
+    id_transaksi VARCHAR(100) NOT NULL,
+    no_dokumen VARCHAR(100) NOT NULL,
+    status_dokumen VARCHAR(100) NOT NULL DEFAULT 'Dipinjam',
+    tgl_dikembalikan DATE,
+    
+    FOREIGN KEY (id_transaksi) REFERENCES trx_peminjaman(id_transaksi) ON DELETE CASCADE,
+    FOREIGN KEY (no_dokumen) REFERENCES master_dokumen(no_dokumen)
+);
+
+-- =========================================================================
+-- 3. TABEL LOG PENGEMBALIAN
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS log_pengembalian (
+    id_pengembalian INT AUTO_INCREMENT PRIMARY KEY,
+    id_transaksi VARCHAR(100) NOT NULL,
+    tgl_kembali DATE NOT NULL,
+    nama_pengembali VARCHAR(255) NOT NULL,
+    ttd_pengembali TEXT,
+    ttd_pic TEXT,
+    status_approval VARCHAR(100) NOT NULL DEFAULT 'Menunggu',
+    catatan_tolak TEXT,
+    
+    FOREIGN KEY (id_transaksi) REFERENCES trx_peminjaman(id_transaksi)
+);
+
+-- =========================================================================
+-- 4. TABEL TRANSAKSI PENYERAHAN DOKUMEN BARU
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS trx_penyerahan (
+    id_penyerahan VARCHAR(100) PRIMARY KEY,
+    tgl_penyerahan DATE NOT NULL,
+    nama_penyerah VARCHAR(255) NOT NULL,
+    id_divisi INT NOT NULL,
+    ttd_penyerah TEXT,
+    ttd_pic TEXT,
+    status_approval VARCHAR(100) NOT NULL DEFAULT 'Menunggu',
+    catatan_tolak TEXT,
+    
+    FOREIGN KEY (id_divisi) REFERENCES master_divisi(id_divisi)
+);
+
+-- =========================================================================
+-- 5. TABEL DETAIL PENYERAHAN (link penyerahan ke dokumen baru)
+-- =========================================================================
+
+CREATE TABLE IF NOT EXISTS detail_penyerahan (
+    id_detail INT AUTO_INCREMENT PRIMARY KEY,
+    id_penyerahan VARCHAR(100) NOT NULL,
+    no_dokumen VARCHAR(100) NOT NULL,
+    nama_dokumen VARCHAR(500) NOT NULL,
+    tahun INT NOT NULL,
+    jenis_dokumen VARCHAR(100) NOT NULL,
+    nama_klien TEXT,
+    nilai_proyek TEXT,
+    file_path TEXT,
+
+    FOREIGN KEY (id_penyerahan) REFERENCES trx_penyerahan(id_penyerahan) ON DELETE CASCADE
+);
+
+-- =========================================================================
+-- 6. SEEDING DUMMY DATA (DATA AWAL UNTUK TESTING)
+-- =========================================================================
+
+-- Insert Master Divisi
+INSERT IGNORE INTO master_divisi (id_divisi, kategori, nama_divisi) VALUES 
+(1, 'Kantor Pusat', 'Teknologi Informasi - Pusat'),
+(2, 'Kantor Pusat', 'Sumber Daya Manusia - Pusat'),
+(3, 'Kantor Pusat', 'Keuangan - Pusat'),
+(4, 'Kantor Pusat', 'Legal & Compliance - Pusat'),
+(5, 'Cabang', 'Operasional - Cabang Jakarta'),
+(6, 'Cabang', 'Operasional - Cabang Surabaya');
+
+-- Insert Master Dokumen
+INSERT IGNORE INTO master_dokumen (no_dokumen, nama_dokumen, tahun, jenis_dokumen, status) VALUES 
+('DOC-1001', 'SOP Keamanan Jaringan v2.0', 2024, 'SOP', 'Tersedia'),
+('DOC-1002', 'Blueprint Arsitektur Server 2025', 2025, 'Blueprint', 'Dipinjam'),
+('DOC-1003', 'Perjanjian Kerjasama Vendor A', 2023, 'Kontrak', 'Dipinjam'),
+('DOC-1004', 'Sertifikat Kalibrasi Alat', 2024, 'Sertifikat', 'Dipinjam'),
+('DOC-1005', 'Laporan Audit Internal Q4', 2025, 'Laporan', 'Tersedia');
+
+-- Insert Transaksi Peminjaman (Dummy - sudah disetujui)
+INSERT IGNORE INTO trx_peminjaman (id_transaksi, tgl_pinjam, batas_waktu, id_divisi, nama_peminjam, email_peminjam, ttd_peminjam, ttd_pic, status_keseluruhan, status_approval) VALUES 
+('TRX-2602-001', '2026-02-20', '2026-02-25', 1, 'Budi Santoso', 'budi@surveyor.co.id', 'base64_string_here', 'base64_string_here', 'Selesai', 'Disetujui'),
+('TRX-2602-002', '2026-02-23', '2026-02-28', 3, 'Siti Aminah', 'siti@surveyor.co.id', 'base64_string_here', 'base64_string_here', 'Dipinjam', 'Disetujui');
+
+-- Insert Detail Peminjaman
+INSERT IGNORE INTO detail_peminjaman (id_transaksi, no_dokumen, status_dokumen, tgl_dikembalikan) VALUES 
+('TRX-2602-001', 'DOC-1001', 'Sudah Kembali', '2026-02-25'),
+('TRX-2602-001', 'DOC-1005', 'Sudah Kembali', '2026-02-25');
+
+INSERT IGNORE INTO detail_peminjaman (id_transaksi, no_dokumen, status_dokumen, tgl_dikembalikan) VALUES 
+('TRX-2602-002', 'DOC-1002', 'Dipinjam', NULL);
